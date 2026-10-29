@@ -62,4 +62,4 @@ These instructions apply to Codex, Claude Code, and other agents working in this
 
 ## Closeout
 
-Explain what changed, how it was checked, observable results, unresolved issues, and the branch/commit/PR when relevant. Distinguish a local preview, a successful CI run, and an actual deployment. Record material accepted architectural choices in `docs/decisions/` when such decisions arise.
+Explain what changed, how it was checked, observable results, unresolved issues, and the branch/commit/PR when relevant. Distinguish a local preview, a successful CI run, and an actual deployment. Record material accepted architectural choices in [`docs/decisions/`](docs/decisions/README.md) when such decisions arise.

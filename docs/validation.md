@@ -13,7 +13,7 @@ There is no unit, golden, or browser test suite yet. The static scaffold has no 
 
 ## Test tooling
 
-Vitest for unit and integration tests and Playwright for browser tests are added in the first PR that introduces behavior to test (see `docs/decisions/` once recorded). Pure analytical tests and pinned deterministic integration fixtures run in ordinary CI. Live external-service checks run separately from the required CI checks and report service availability separately from application regressions.
+Vitest for unit and integration tests and Playwright for browser tests are added in the first PR that introduces behavior to test (see [decision 0006](decisions/0006-test-tooling-introduced-with-the-first-testable-behavior.md)). Pure analytical tests and pinned deterministic integration fixtures run in ordinary CI. Live external-service checks run separately from the required CI checks and report service availability separately from application regressions.
 
 ## Verification by change
 

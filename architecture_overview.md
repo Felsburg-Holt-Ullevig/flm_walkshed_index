@@ -70,4 +70,4 @@ Local file parsing stays in the browser. Geocoding and geometry-based service qu
 
 The next useful technical slice is one station and a small approved geographic sample, with independently reviewed reachability/aggregation evidence. Do not label scaffold checks as analytical validation.
 
-Update this file when implemented boundaries, toolchain, data flow, or deployment change. Use short decision records for material accepted choices and keep task status in the issue/PR workflow.
+Update this file when implemented boundaries, toolchain, data flow, or deployment change. Use short [decision records](docs/decisions/README.md) for material accepted choices and keep task status in the issue/PR workflow.
