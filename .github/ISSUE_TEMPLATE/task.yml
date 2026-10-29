@@ -1,0 +1,24 @@
+name: Development task
+description: Define a bounded development task and its acceptance evidence.
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: User outcome
+      description: What should a user or maintainer be able to do?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and boundaries
+      description: Include relevant requirements and identify unresolved methodology or data decisions.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance evidence
+      description: Give example inputs and expected results, relevant checks, and the person who accepts the result.
+    validations:
+      required: true
