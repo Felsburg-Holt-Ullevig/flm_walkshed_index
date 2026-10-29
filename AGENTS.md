@@ -34,6 +34,7 @@ These instructions apply to Codex, Claude Code, and other agents working in this
 
 - Follow the single shared matrix in `docs/validation.md` and use actual repository scripts.
 - Run `pnpm typecheck` for TypeScript changes and `pnpm build` for application/configuration changes. The build includes typechecking.
+- Run `pnpm lint` for any TypeScript, JSON, or CSS change; `pnpm format` applies formatting.
 - For UI changes, inspect the running application at desktop and narrow widths and check keyboard access. A successful build does not establish correct rendering.
 - Add meaningful tests when analytical, data-loading, persistence, worker, or other nontrivial behavior is introduced. The initial static scaffold has no analytical test suite; do not invent passing test counts or use an empty suite as evidence.
 - Never regenerate golden expectations solely to clear failures. Explain differences and obtain methodology/data-owner approval for baseline changes.

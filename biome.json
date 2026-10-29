@@ -1,0 +1,45 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": { "includes": ["**", "!pnpm-lock.yaml", "!**/*.md"] },
+  "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 2, "lineWidth": 100 },
+  "javascript": { "formatter": { "quoteStyle": "single" } },
+  "linter": { "enabled": true, "rules": { "preset": "recommended" } },
+  "assist": { "enabled": true },
+  "overrides": [
+    {
+      "includes": ["src/domain/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "react": "Domain modules must not depend on React.",
+                  "react-dom": "Domain modules must not depend on React.",
+                  "maplibre-gl": "Domain modules must not depend on the map engine."
+                },
+                "patterns": [
+                  {
+                    "group": [
+                      "react/*",
+                      "react-dom/*",
+                      "**/ui",
+                      "**/ui/**",
+                      "**/adapters",
+                      "**/adapters/**",
+                      "**/application/**",
+                      "**/workers/**"
+                    ],
+                    "message": "Domain modules must stay independent of UI, adapters, application coordination, and workers."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
