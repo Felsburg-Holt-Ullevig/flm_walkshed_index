@@ -6,7 +6,8 @@ The intended workflow is to create or upload station locations, generate network
 
 ## Maintainer entry points
 
-- [Developer guide](DEVELOPER.md): working locally, reviewing changes, CI, and releases.
+- [Developer guide](DEVELOPER.md): setup, commands, reviewing changes, CI, and releases.
+- [Requirements](docs/requirements.md): what the finished application must do.
 - [Architecture overview](architecture_overview.md): implemented boundaries and open technical decisions.
 - [Shared agent instructions](AGENTS.md): policy used by Codex and Claude Code.
 - [Validation policy](docs/validation.md): checks and analytical acceptance.
@@ -16,17 +17,11 @@ The intended workflow is to create or upload station locations, generate network
 
 ## Development
 
-Use Node **24.19.0** and pnpm **11.25.0**. The exact package manager and dependency versions are recorded in `package.json` and `pnpm-lock.yaml`.
+Setup, commands, and the review process are in the [developer guide](DEVELOPER.md). Development uses AI coding agents under human review; a project lead approves every change merged to `main`.
 
-| Command | Purpose |
-|---|---|
-| `pnpm install --frozen-lockfile` | Install the committed dependency versions |
-| `pnpm dev` | Run the local development page at `http://127.0.0.1:5173/` |
-| `pnpm typecheck` | Check TypeScript without generating JavaScript files |
-| `pnpm build` | Typecheck and generate the static site in `dist/` |
-| `pnpm preview` | Inspect that build locally at `http://127.0.0.1:4173/` |
+## Development preview
 
-The preview server is for local review. A GitHub Actions workflow publishes the built Hello World scaffold to GitHub Pages after changes reach `main`; an administrator must select GitHub Actions as the Pages source in repository settings. CDOT production hosting remains subject to coordination. Methodology, accessibility, data publication, branding, and final distribution requirements also remain open.
+A [development preview](https://felsburg-holt-ullevig.github.io/flm_walkshed_index/) is built from `main`. It is not a CDOT service and has no analytical content yet. CDOT production hosting, methodology, accessibility evidence, data publication, branding, and final distribution requirements remain open.
 
 ## Data and distribution
 

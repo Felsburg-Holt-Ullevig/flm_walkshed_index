@@ -16,14 +16,14 @@ pipeline/      offline preparation boundary documented; implementation pending
 data/          small-fixture/catalog policy documented; datasets pending
 ```
 
-`AGENTS.md` is the shared agent policy. `CLAUDE.md` imports it. `DEVELOPER.md` is the human workflow guide; `docs/validation.md` is the shared verification matrix. Detailed local planning reports are excluded from Git pending publication review.
+`AGENTS.md` is the shared agent policy. `CLAUDE.md` imports it. `DEVELOPER.md` is the human workflow guide; `docs/requirements.md` lists requirements by ID; `docs/validation.md` is the shared verification matrix. Detailed local planning reports are excluded from Git pending publication review.
 
 Public change descriptions and comments use neutral technical language focused on outcomes, rationale, verification, and limitations. The shared policy and PR checklist define that writing standard.
 
 ## Toolchain and build
 
-- Node 24.19.0 and pnpm 11.25.0 are pinned. `pnpm-lock.yaml` records the dependency graph.
-- React 19, TypeScript 7, Vite 8, and the official React plugin form the initial toolchain; `package.json` is authoritative for exact versions.
+- Node and pnpm versions are pinned in `.node-version` and `package.json`; `pnpm-lock.yaml` records the dependency graph. [DEVELOPER.md](DEVELOPER.md) holds setup commands.
+- React, TypeScript (native compiler), Vite, the official React plugin, and Biome (lint and format) form the initial toolchain; `package.json` is authoritative for exact versions.
 - TypeScript is strict, with unchecked-index and exact-optional-property checks. It emits no sibling JavaScript files.
 - TypeScript checks run under three configurations: browser app (`tsconfig.json`), build tooling (`tsconfig.node.json`), and domain modules without DOM or Node APIs (`tsconfig.domain.json`).
 - `pnpm build` typechecks and generates static output in `dist/`. The build uses relative asset paths (`base: './'`), suitable for root or subdirectory hosting; `BASE_PATH` overrides it for a host requiring an absolute base. The relative base must be checked on the eventual host.
@@ -39,6 +39,20 @@ Add an application coordination layer and worker directory when the first analys
 
 Data preparation should remain an offline workflow. Display tiles, routing connectivity, and analytical indicator data are separate products connected through a versioned manifest. Large inputs/archives belong in approved external storage; only small cleared fixtures and metadata belong in normal Git.
 
+## Runtime analysis options
+
+| Option | Description |
+|---|---|
+| A | Routing, aggregation, and scoring in the browser. This is the first candidate. |
+| B | Browser application plus an existing approved routing or analysis service. |
+| C | Browser application plus a custom backend. |
+
+Move from A to B or C only through a decision record backed by measured evidence that A cannot meet agreed correctness or performance thresholds. Try partitioning, indexing, workers, and caching first.
+
+## Where user data travels
+
+Local file parsing stays in the browser. Geocoding and geometry-based service queries send locations to the external service. Do not describe the workflow as local-only when network calls carry analytical inputs.
+
 ## Provisional direction and open decisions
 
 | Topic | Current position |
@@ -49,7 +63,7 @@ Data preparation should remain an offline workflow. Display tiles, routing conne
 | PMTiles | Planned display/preparation deliverable; routing representation remains unproven |
 | Indicator access | Static indexed packages and approved feature services remain options |
 | Session storage | Versioned local exchange/autosave design remains open |
-| Methodology | Original spreadsheet/model and human-approved definitions are required |
+| Methodology | No reference model exists; the method is specified in `docs/methodology.md` and approved by humans before it is authoritative |
 | Hosting | A GitHub Pages workflow is configured for a public scaffold preview; CDOT-managed production hosting and staging remain pending |
 | Accessibility/reporting | Acceptance criteria and a validated PDF path remain pending |
 | Licensing/branding | Client/code/data/third-party distribution decisions remain pending |
