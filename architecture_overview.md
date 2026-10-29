@@ -25,7 +25,9 @@ Public change descriptions and comments use neutral technical language focused o
 - Node 24.19.0 and pnpm 11.25.0 are pinned. `pnpm-lock.yaml` records the dependency graph.
 - React 19, TypeScript 7, Vite 8, and the official React plugin form the initial toolchain; `package.json` is authoritative for exact versions.
 - TypeScript is strict, with unchecked-index and exact-optional-property checks. It emits no sibling JavaScript files.
-- `pnpm build` typechecks and generates static output in `dist/`. The relative asset base is intended for root or subdirectory hosting and must be checked on the eventual host.
+- TypeScript checks run under three configurations: browser app (`tsconfig.json`), build tooling (`tsconfig.node.json`), and domain modules without DOM or Node APIs (`tsconfig.domain.json`).
+- `pnpm build` typechecks and generates static output in `dist/`. The build uses relative asset paths (`base: './'`), suitable for root or subdirectory hosting; `BASE_PATH` overrides it for a host requiring an absolute base. The relative base must be checked on the eventual host.
+- The page footer shows the short commit identifier of the build.
 - Local development and build previews bind to loopback on ports 5173 and 4173.
 - GitHub CI installs from the frozen lockfile and runs the production build. Actions are pinned to verified commit revisions. CI does not deploy the website.
 

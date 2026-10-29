@@ -1,0 +1,3 @@
+# pnpm project settings. pnpm 11 does not read these from .npmrc.
+engineStrict: true
+saveExact: true

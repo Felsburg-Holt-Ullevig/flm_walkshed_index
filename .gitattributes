@@ -5,3 +5,13 @@
 *.pdf binary
 *.gpkg binary
 *.pmtiles binary
+*.zip binary
+*.gz binary
+*.parquet binary
+*.pbf binary
+*.shp binary
+*.shx binary
+*.dbf binary
+*.xlsx binary
+*.docx binary
+*.woff2 binary

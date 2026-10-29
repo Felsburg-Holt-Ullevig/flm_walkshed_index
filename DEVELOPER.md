@@ -20,7 +20,7 @@ Install Node 24.19.0 and pnpm 11.25.0, then obtain a checkout of this repository
 
 Both servers bind to the local computer and use fixed ports. If a port is occupied, identify the process instead of stopping an unrelated service. Opening `index.html` directly from disk is not the application workflow; Vite serves the TypeScript entry point.
 
-The runtime is pinned in `.node-version`; pnpm is pinned by `packageManager` in `package.json`. Dependencies are exact versions and `pnpm-lock.yaml` is committed. Do not introduce a second lockfile. A normal clone needs no credentials for installation of the public packages selected here.
+Node is pinned in `.node-version` and enforced by `engineStrict` in `pnpm-workspace.yaml`; pnpm is pinned by `packageManager` in `package.json`. Dependency versions are saved exactly (`saveExact`) and `pnpm-lock.yaml` is committed. Do not introduce a second lockfile. A normal clone needs no credentials for installation of the public packages selected here.
 
 Development tools may be supplied by local or hosted environments. Keep machine-specific paths in local notes rather than shared commands. The repository is suitable for Windows and Linux development; GitHub CI checks the Linux build. Avoid concurrent edits to one checkout. A nonsynced checkout can help if a synchronized folder causes locks, but moving files is a separate task.
 
@@ -44,7 +44,7 @@ Write public change descriptions and comments in neutral technical language: exp
 
 The `CI` workflow runs for PRs, pushes to `main`, and manual dispatch. Its `Verify foundation` job installs from the frozen lockfile and typechecks/builds the app. It does not claim GIS accuracy, accessibility conformance, or test coverage. See [validation](docs/validation.md).
 
-The `Deploy GitHub Pages` workflow builds `dist/` and publishes it when changes reach `main`, or when an administrator manually starts the workflow. Before the first deployment, open repository **Settings → Pages** and set **Build and deployment → Source** to **GitHub Actions**. After the workflow succeeds, GitHub reports the site URL in the Actions run and the `github-pages` environment. This repository builds for the project URL `/flm_walkshed_index/`. Pages hosts the current scaffold as a public preview; it is not the CDOT production environment.
+The `Deploy GitHub Pages` workflow builds `dist/` and publishes it when changes reach `main`, or when an administrator manually starts the workflow. Before the first deployment, open repository **Settings → Pages** and set **Build and deployment → Source** to **GitHub Actions**. After the workflow succeeds, GitHub reports the site URL in the Actions run and the `github-pages` environment. The build uses relative asset paths, so the same output works at the Pages project URL and in a subdirectory. Pages hosts the current scaffold as a public preview; it is not the CDOT production environment.
 
 After its first successful PR run, an administrator can establish a rule for `main`:
 
