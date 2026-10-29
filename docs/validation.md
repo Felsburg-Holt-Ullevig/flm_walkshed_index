@@ -4,7 +4,7 @@ This is the verification policy for all agents. Tool-specific instruction files 
 
 ## Checks available now
 
-`pnpm lint` runs Biome formatting and lint checks, including recommended accessibility rules and a rule preventing `src/domain/` from importing React, UI, adapters, application, or worker modules. `pnpm typecheck` checks `src/` and `vite.config.ts` without emitting files. `pnpm build` performs the same typecheck and creates the static build. CI's `Verify foundation` job installs the frozen dependency graph and runs `pnpm build`.
+`pnpm lint` runs Biome formatting and lint checks, including recommended accessibility rules and a rule preventing `src/domain/` from importing React, UI, adapters, application, or worker modules. `pnpm typecheck` checks `src/` and `vite.config.ts` without emitting files. `pnpm build` performs the same typecheck and creates the static build. CI's `Verify foundation` job installs the frozen dependency graph and runs `pnpm lint` and `pnpm build`.
 
 The static scaffold has no calculation, loader, or persistence behavior and no unit/golden/browser test suite. Do not label an empty suite as passing or claim scaffold checks validate GIS results. Manual desktop/narrow and keyboard review is required for UI changes until and alongside useful browser coverage.
 
