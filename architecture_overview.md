@@ -4,7 +4,7 @@ Updated: October 29, 2026. Status: version 1 repository foundation.
 
 ## Implemented structure
 
-This is one code repository containing a React + TypeScript + Vite web scaffold and a documented location for future offline preparation. The app currently renders a static development introduction. It makes no GIS/API requests and performs no analysis, storage, or exports.
+This is one code repository containing a React + TypeScript + Vite web scaffold and a documented location for future offline preparation. The app currently renders only a Hello World placeholder with basic CSS. It makes no GIS/API requests and performs no analysis, storage, or exports.
 
 ```text
 index.html -> src/main.tsx -> src/ui/App.tsx

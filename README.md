@@ -2,7 +2,7 @@
 
 A web application in development for evaluating first/last mile walking access around transit stops and stations in Colorado.
 
-The intended workflow is to create or upload station locations, generate network walksheds, examine individual metrics and index scores, and export results. This repository currently contains the development foundation and a static introduction page. GIS data, analysis, scoring, session storage, and reporting are future work.
+The intended workflow is to create or upload station locations, generate network walksheds, examine individual metrics and index scores, and export results. This repository currently contains the development foundation and a Hello World placeholder. GIS data, analysis, scoring, session storage, and reporting are future work.
 
 ## Maintainer entry points
 
