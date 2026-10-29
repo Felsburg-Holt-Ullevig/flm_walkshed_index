@@ -2,6 +2,10 @@
 
 Describe the user-visible change and link the task/acceptance criteria.
 
+Closes #
+
+Requirement IDs:
+
 ## Review evidence
 
 - Preview or screenshots for visible changes:
@@ -21,3 +25,4 @@ List unresolved issues, required human decisions, and recovery/rollback steps wh
 - [ ] Shared architecture/method/data documentation is current.
 - [ ] No credentials, client documents, local sessions, or large raw/generated data are included.
 - [ ] Any analytical-baseline change has the required human approval.
+- [ ] No attribution trailers or model names in commits or this description.

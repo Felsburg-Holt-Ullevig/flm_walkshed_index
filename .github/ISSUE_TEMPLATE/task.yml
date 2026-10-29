@@ -22,3 +22,23 @@ body:
       description: Give example inputs and expected results, relevant checks, and the person who accepts the result.
     validations:
       required: true
+  - type: input
+    id: requirements
+    attributes:
+      label: Requirement IDs
+      description: For example R-04, R-08. See docs/requirements.md.
+    validations:
+      required: false
+  - type: input
+    id: versions
+    attributes:
+      label: Method, data, or schema versions affected
+    validations:
+      required: false
+  - type: input
+    id: owner
+    attributes:
+      label: Acceptance owner
+      description: GitHub handle of the person who accepts the result.
+    validations:
+      required: true
