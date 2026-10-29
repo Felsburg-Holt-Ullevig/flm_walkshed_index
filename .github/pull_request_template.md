@@ -16,6 +16,7 @@ List unresolved issues, required human decisions, and recovery/rollback steps wh
 ## Review checklist
 
 - [ ] The change stays within the authorized task.
+- [ ] Public-facing text focuses on technical outcomes and excludes unnecessary personnel or process commentary.
 - [ ] Relevant checks and limitations are reported accurately.
 - [ ] Shared architecture/method/data documentation is current.
 - [ ] No credentials, client documents, local sessions, or large raw/generated data are included.

@@ -18,6 +18,8 @@ data/          small-fixture/catalog policy documented; datasets pending
 
 `AGENTS.md` is the shared agent policy. `CLAUDE.md` imports it. `DEVELOPER.md` is the human workflow guide; `docs/validation.md` is the shared verification matrix. Detailed local planning reports are excluded from Git pending publication review.
 
+Public change descriptions and comments use neutral technical language focused on outcomes, rationale, verification, and limitations. The shared policy and PR checklist define that writing standard.
+
 ## Toolchain and build
 
 - Node 24.19.0 and pnpm 11.25.0 are pinned. `pnpm-lock.yaml` records the dependency graph.

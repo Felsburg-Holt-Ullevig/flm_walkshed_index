@@ -11,10 +11,16 @@ These instructions apply to Codex, Claude Code, and other agents working in this
 
 ## Communication and scope
 
-- The human leads are transportation/GIS practitioners with limited code-reading experience. Use literal, direct, structured language and explain decisions in plain English.
+- Use literal, direct, structured language. Explain technical decisions in plain English and provide acceptance evidence understandable without reading implementation code.
 - Perform routine implementation and checks within the authorized task. Ask for decisions when missing requirements affect methodology, access, cost, or public release.
 - Keep changes bounded by the task's outcome and acceptance criteria. Identify provisional choices and unresolved dependencies.
 - Keep `CLAUDE.md` minimal. Do not duplicate this policy or establish different testing/Git rules for different agents.
+
+## Public writing
+
+- Write commit messages, PR titles/descriptions, code and review comments, release notes, and public documentation in neutral technical language. Focus on the problem, completed change, rationale, verification, and limitations.
+- Avoid conversational history, generation narratives, model names, and unnecessary personnel details. Discuss development tools when directly relevant to setup, reproducibility, attribution, or the technical issue.
+- Keep tool-specific instructions factual. Apply the same public-writing standard regardless of who or what performs the work.
 
 ## Architecture and analytical integrity
 

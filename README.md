@@ -6,7 +6,7 @@ The intended workflow is to create or upload station locations, generate network
 
 ## Maintainer entry points
 
-- [Developer guide](DEVELOPER.md): working locally, reviewing agent changes, CI, and releases.
+- [Developer guide](DEVELOPER.md): working locally, reviewing changes, CI, and releases.
 - [Architecture overview](architecture_overview.md): implemented boundaries and open technical decisions.
 - [Shared agent instructions](AGENTS.md): policy used by Codex and Claude Code.
 - [Validation policy](docs/validation.md): checks and analytical acceptance.

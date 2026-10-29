@@ -2,13 +2,13 @@
 
 ## What exists today
 
-The repository has a minimal React/TypeScript/Vite application, shared agent guidance, a production-build check, and a pull-request workflow. It does not yet load GIS data or perform calculations. The [architecture overview](architecture_overview.md) describes the boundary between implemented structure and planned capabilities.
+The repository has a minimal React/TypeScript/Vite application, shared contribution guidance, a production-build check, and a pull-request workflow. It does not yet load GIS data or perform calculations. The [architecture overview](architecture_overview.md) describes the boundary between implemented structure and planned capabilities.
 
 The source repository is [Felsburg-Holt-Ullevig/flm_walkshed_index](https://github.com/Felsburg-Holt-Ullevig/flm_walkshed_index). `main` is the integration branch. Proposed changes should be reviewed on feature branches before merging. A GitHub source page or a green check is not a deployed website.
 
 ## Getting a local working page
 
-Install Node 24.19.0 and pnpm 11.25.0, then obtain a checkout of this repository. Use the commands below from its root folder. Coding agents should perform routine commands where their environment allows them; human leads should receive the outcome and evidence rather than unexplained command lists.
+Install Node 24.19.0 and pnpm 11.25.0, then obtain a checkout of this repository. Use the commands below from its root folder. Review materials should explain outcomes and verification evidence in plain language.
 
 | Command | Expected result |
 |---|---|
@@ -22,13 +22,13 @@ Both servers bind to the local computer and use fixed ports. If a port is occupi
 
 The runtime is pinned in `.node-version`; pnpm is pinned by `packageManager` in `package.json`. Dependencies are exact versions and `pnpm-lock.yaml` is committed. Do not introduce a second lockfile. A normal clone needs no credentials for installation of the public packages selected here.
 
-The current agent environment supplies Node/pnpm through its bundled runtime. Another agent may need its own tool paths. Keep those machine-specific paths in session notes, not shared commands. The repository is suitable for Windows and Linux development; GitHub CI checks the Linux build. Avoid concurrent edits to one checkout. A nonsynced checkout can help if a synchronized folder causes locks, but moving files is a separate task.
+Development tools may be supplied by local or hosted environments. Keep machine-specific paths in local notes rather than shared commands. The repository is suitable for Windows and Linux development; GitHub CI checks the Linux build. Avoid concurrent edits to one checkout. A nonsynced checkout can help if a synchronized folder causes locks, but moving files is a separate task.
 
-## Requesting and reviewing agent work
+## Requesting and reviewing changes
 
 Create a task describing the user outcome, scope, representative input/expected result, and who accepts it. Keep numerical methodology questions explicit. The [task template](.github/ISSUE_TEMPLATE/task.yml) provides those fields.
 
-The agent should use a descriptive branch, implement the bounded task, run relevant checks, and open a PR when authorized. The PR should give you:
+Use a descriptive branch, implement the bounded task, run relevant checks, and open a PR when authorized. The PR should provide:
 
 - a plain-language explanation of the change;
 - a local or approved hosted preview, or screenshots for visible changes;
@@ -36,7 +36,9 @@ The agent should use a descriptive branch, implement the bounded task, run relev
 - check results, limitations, and data/method version changes;
 - recovery or rollback information when saved data or deployment changes.
 
-Review whether you can complete the intended workflow and whether the reported examples match expectations. Ask the other lead to review meaningful changes. An independent technical/GIS review is appropriate for major analytical boundaries and release readiness; an agent reviewing its own code cannot approve the scientific method.
+Review whether you can complete the intended workflow and whether the reported examples match expectations. Ask the other lead to review meaningful changes. Independent technical/GIS review is appropriate for major analytical boundaries and release readiness. Methodology acceptance requires the designated reviewers' approval.
+
+Write public change descriptions and comments in neutral technical language: explain the change, rationale, verification, and limitations. Keep conversational history and unnecessary personnel/process details out of the record. Tool-specific setup and attribution belong where they are technically relevant.
 
 ## Automated checks and GitHub settings
 
