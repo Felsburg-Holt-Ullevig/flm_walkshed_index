@@ -44,6 +44,8 @@ Write public change descriptions and comments in neutral technical language: exp
 
 The `CI` workflow runs for PRs, pushes to `main`, and manual dispatch. Its `Verify foundation` job installs from the frozen lockfile and typechecks/builds the app. It does not claim GIS accuracy, accessibility conformance, or test coverage. See [validation](docs/validation.md).
 
+The `Deploy GitHub Pages` workflow builds `dist/` and publishes it when changes reach `main`, or when an administrator manually starts the workflow. Before the first deployment, open repository **Settings → Pages** and set **Build and deployment → Source** to **GitHub Actions**. After the workflow succeeds, GitHub reports the site URL in the Actions run and the `github-pages` environment. This repository builds for the project URL `/flm_walkshed_index/`. Pages hosts the current scaffold as a public preview; it is not the CDOT production environment.
+
 After its first successful PR run, an administrator can establish a rule for `main`:
 
 1. Require a pull request and one approval from another reviewer.
@@ -69,7 +71,7 @@ There are no production credentials, remote data releases, or hosted sessions in
 
 ## Deployment, recovery, and handoff
 
-Production hosting is pending CDOT coordination. CI produces a build but performs no deployment. The relative asset base supports testing under a subdirectory; confirm the actual host's behavior before release.
+GitHub Pages publishes the scaffold preview from `main`. CDOT production hosting is pending coordination. CI checks pull requests; the Pages workflow deploys only from `main` or manual dispatch. Confirm the production host's asset paths and behavior before release.
 
 For a future release, identify the source commit, locked dependency graph, app artifact, configuration, data release IDs, method version, and validation evidence. Promote a tested artifact through the approved staging process. Retain the previous compatible app/data combination and verify a rollback procedure before public release. Record actual URLs and CDOT maintenance owners once approved.
 

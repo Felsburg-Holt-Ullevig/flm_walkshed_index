@@ -26,7 +26,7 @@ Use Node **24.19.0** and pnpm **11.25.0**. The exact package manager and depende
 | `pnpm build` | Typecheck and generate the static site in `dist/` |
 | `pnpm preview` | Inspect that build locally at `http://127.0.0.1:4173/` |
 
-The preview server is for local review. Production hosting and a public application URL have not been configured. CDOT's hosting, methodology, accessibility, data publication, branding, and final distribution requirements remain subject to coordination.
+The preview server is for local review. A GitHub Actions workflow publishes the built Hello World scaffold to GitHub Pages after changes reach `main`; an administrator must select GitHub Actions as the Pages source in repository settings. CDOT production hosting remains subject to coordination. Methodology, accessibility, data publication, branding, and final distribution requirements also remain open.
 
 ## Data and distribution
 

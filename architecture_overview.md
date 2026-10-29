@@ -48,7 +48,7 @@ Data preparation should remain an offline workflow. Display tiles, routing conne
 | Indicator access | Static indexed packages and approved feature services remain options |
 | Session storage | Versioned local exchange/autosave design remains open |
 | Methodology | Original spreadsheet/model and human-approved definitions are required |
-| Hosting | CDOT-managed final host and staging process remain pending |
+| Hosting | A GitHub Pages workflow is configured for a public scaffold preview; CDOT-managed production hosting and staging remain pending |
 | Accessibility/reporting | Acceptance criteria and a validated PDF path remain pending |
 | Licensing/branding | Client/code/data/third-party distribution decisions remain pending |
 
