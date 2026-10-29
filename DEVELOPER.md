@@ -42,20 +42,18 @@ Write public change descriptions and comments in neutral technical language: exp
 
 ## Automated checks and GitHub settings
 
-The `CI` workflow runs for PRs, pushes to `main`, and manual dispatch. Its `Verify foundation` job installs from the frozen lockfile and typechecks/builds the app. It does not claim GIS accuracy, accessibility conformance, or test coverage. See [validation](docs/validation.md).
+The single `CI` workflow runs for PRs, pushes to `main`, and manual dispatch. On PRs it installs from the frozen lockfile, lints, typechecks, and builds (`Verify foundation`). On `main`, it then deploys the verified build to GitHub Pages (`Deploy GitHub Pages`); a failed verification prevents deployment. Neither job claims GIS accuracy, accessibility conformance, or test coverage. See [validation](docs/validation.md).
 
-The `Deploy GitHub Pages` workflow builds `dist/` and publishes it when changes reach `main`, or when an administrator manually starts the workflow. Before the first deployment, open repository **Settings → Pages** and set **Build and deployment → Source** to **GitHub Actions**. After the workflow succeeds, GitHub reports the site URL in the Actions run and the `github-pages` environment. The build uses relative asset paths, so the same output works at the Pages project URL and in a subdirectory. Pages hosts the current scaffold as a public preview; it is not the CDOT production environment.
+Pages must have **Settings → Pages → Build and deployment → Source** set to **GitHub Actions**. After a deployment, GitHub reports the site URL in the Actions run and the `github-pages` environment. The build uses relative asset paths, so the same output works at the Pages project URL and in a subdirectory. Pages hosts the current scaffold as a public preview; it is not the CDOT production environment.
 
-After its first successful PR run, an administrator can establish a rule for `main`:
+`main` is protected by two repository rulesets:
 
-1. Require a pull request and one approval from another reviewer.
-2. Require the `Verify foundation` status check.
-3. Require conversations to be resolved; prevent force pushes and branch deletion.
-4. Apply the protection to administrators as appropriate for the team's emergency process.
+- **main – safety and CI** (no bypass): changes reach `main` only through a pull request; the `Verify foundation` check must pass with an up-to-date branch; conversations must be resolved; force pushes and branch deletion are blocked.
+- **main – review**: one approval and code-owner review are required. Repository admins may bypass this ruleset on pull requests only, which lets the project lead merge their own and their agents' PRs after CI passes.
 
-The workflow file does not configure these settings. Verify the actual GitHub rule and its behavior. Add CODEOWNERS after the co-lead's GitHub identity and review responsibilities are confirmed. The initial PR should remain open for human review; agents should not infer merge approval from an implementation request.
+`.github/CODEOWNERS` requests the project lead's review on every change. Agents do not infer merge approval from an implementation request.
 
-Dependabot is configured to propose weekly application and Actions dependency updates. Review and test those updates; there is no automatic merge or deployment.
+Dependabot proposes monthly, grouped updates for application and Actions dependencies. `@types/node` major versions are ignored because they follow `.node-version`. Review and test updates; there is no automatic merge or deployment.
 
 ## Where files belong
 

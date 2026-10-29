@@ -29,7 +29,7 @@ Public change descriptions and comments use neutral technical language focused o
 - `pnpm build` typechecks and generates static output in `dist/`. The build uses relative asset paths (`base: './'`), suitable for root or subdirectory hosting; `BASE_PATH` overrides it for a host requiring an absolute base. The relative base must be checked on the eventual host.
 - The page footer shows the short commit identifier of the build.
 - Local development and build previews bind to loopback on ports 5173 and 4173.
-- GitHub CI installs from the frozen lockfile and runs the production build. Actions are pinned to verified commit revisions. CI does not deploy the website.
+- GitHub CI installs from the frozen lockfile, lints, and runs the production build. Deployment to the Pages preview runs only after verification succeeds and publishes the verified build. Actions are pinned to verified commit revisions.
 
 ## Boundaries for subsequent work
 
