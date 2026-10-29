@@ -1,0 +1,46 @@
+# Dependencies, builds, and local caches
+node_modules/
+dist/
+dist-check/
+.pnpm-store/
+*.tsbuildinfo
+*.log
+
+# Credentials and personal configuration; commit only safe examples
+.env
+.env.*
+!.env.example
+!.env.*.example
+CLAUDE.local.md
+.claude/settings.local.json
+.codex/local/
+
+# Local background review packets: publish only after separate review
+/docs/planning/
+
+# Full GIS inputs, intermediate/generated packages, and user sessions
+/data/raw/
+/data/staging/
+/data/generated/
+/sessions/
+/output/
+
+# Python preparation environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Test artifacts
+test-results/
+playwright-report/
+coverage/
+
+# Local editor/OS files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
