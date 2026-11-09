@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flm-pipeline"
+version = "0.1.0"
+description = "Offline source inspection and GIS preparation for the FLM walkshed prototype"
+requires-python = ">=3.12.10,<3.13"
+dependencies = [
+    "geopandas>=1.0,<2",
+    "osmium>=4.0,<5",
+    "pandas>=2.2,<4",
+    "psutil>=6,<8",
+    "jsonschema==4.25.1",
+    "pyogrio>=0.10,<1",
+    "pyproj>=3.7,<4",
+    "pytest>=8,<10",
+    "shapely>=2,<3",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -p no:cacheprovider"

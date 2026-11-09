@@ -10,23 +10,32 @@
   },
   "scripts": {
     "dev": "vite",
-    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.node.json && tsc -p tsconfig.domain.json",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.node.json && tsc -p tsconfig.domain.json && tsc -p tsconfig.tests.json",
     "build": "pnpm typecheck && vite build",
     "preview": "vite preview",
     "lint": "biome check .",
-    "format": "biome check --write ."
+    "format": "biome check --write .",
+    "test": "vitest run",
+    "test:browser": "playwright test",
+    "schema:generate": "node scripts/package-types.mjs",
+    "schema:check": "node scripts/package-types.mjs --check"
   },
   "dependencies": {
+    "ajv": "8.20.0",
+    "geographiclib-geodesic": "2.2.0",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",
+    "@playwright/test": "1.64.1",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.2",
+    "json-schema-to-typescript": "16.0.0",
     "typescript": "7.0.2",
-    "vite": "8.3.5"
+    "vite": "8.3.5",
+    "vitest": "5.1.0"
   }
 }

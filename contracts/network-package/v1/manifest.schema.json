@@ -1,0 +1,393 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "flm-package-1"
+    },
+    "release_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "graph_id": {
+      "$ref": "common.schema.json#/$defs/sha"
+    },
+    "status": {
+      "const": "complete_experimental"
+    },
+    "identity": {
+      "type": "object",
+      "properties": {
+        "graph_format": {
+          "const": "flm-directed-graph-1"
+        },
+        "rule_version": {
+          "$ref": "common.schema.json#/$defs/text"
+        },
+        "scenario_id": {
+          "$ref": "common.schema.json#/$defs/id"
+        },
+        "rule_sha256": {
+          "$ref": "common.schema.json#/$defs/sha"
+        },
+        "code_sha256": {
+          "$ref": "common.schema.json#/$defs/sha"
+        },
+        "config_sha256": {
+          "$ref": "common.schema.json#/$defs/sha"
+        },
+        "source_inventory_sha256": {
+          "$ref": "common.schema.json#/$defs/sha"
+        },
+        "length_model": {
+          "enum": ["wgs84_geodesic_international_ft", "synthetic_declared_ft"]
+        },
+        "seconds_per_foot": {
+          "const": 0.24384
+        }
+      },
+      "required": [
+        "graph_format",
+        "rule_version",
+        "scenario_id",
+        "rule_sha256",
+        "code_sha256",
+        "config_sha256",
+        "source_inventory_sha256",
+        "length_model",
+        "seconds_per_foot"
+      ],
+      "additionalProperties": false
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "core_bbox": {
+          "$ref": "common.schema.json#/$defs/bbox"
+        },
+        "extract_bbox": {
+          "$ref": "common.schema.json#/$defs/bbox"
+        },
+        "selection": {
+          "enum": ["node_inside_complete_way", "synthetic_closed"]
+        },
+        "readiness": {
+          "enum": ["not_established", "synthetic_closed"]
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/text"
+          }
+        }
+      },
+      "required": ["core_bbox", "extract_bbox", "selection", "readiness", "limitations"],
+      "additionalProperties": false
+    },
+    "diagnostics": {
+      "type": "object",
+      "properties": {
+        "unknown_candidates": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "unsupported_restrictions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "unresolved_relation_members": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "blockers": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/text"
+          }
+        },
+        "analytical_promotion": {
+          "const": "blocked_experimental"
+        }
+      },
+      "required": [
+        "unknown_candidates",
+        "unsupported_restrictions",
+        "unresolved_relation_members",
+        "blockers",
+        "analytical_promotion"
+      ],
+      "additionalProperties": false
+    },
+    "crs": {
+      "const": "EPSG:4326"
+    },
+    "coordinate_order": {
+      "const": "longitude_latitude"
+    },
+    "length_unit": {
+      "const": "international_foot"
+    },
+    "time_unit": {
+      "const": "second"
+    },
+    "travel_profile": {
+      "const": "general_pedestrian"
+    },
+    "wheelchair_accessibility": {
+      "const": "not_evaluated"
+    },
+    "compatible_app_versions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+      },
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true
+    },
+    "files": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*\\.(json|gpkg|txt)$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "sha256": {
+              "$ref": "common.schema.json#/$defs/sha"
+            },
+            "records": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": ["path", "bytes", "sha256", "records"],
+          "additionalProperties": false
+        },
+        "segments": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*\\.(json|gpkg|txt)$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "sha256": {
+              "$ref": "common.schema.json#/$defs/sha"
+            },
+            "records": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": ["path", "bytes", "sha256", "records"],
+          "additionalProperties": false
+        },
+        "arcs": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*\\.(json|gpkg|txt)$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "sha256": {
+              "$ref": "common.schema.json#/$defs/sha"
+            },
+            "records": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": ["path", "bytes", "sha256", "records"],
+          "additionalProperties": false
+        },
+        "inventory": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*\\.(json|gpkg|txt)$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "sha256": {
+              "$ref": "common.schema.json#/$defs/sha"
+            },
+            "records": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": ["path", "bytes", "sha256", "records"],
+          "additionalProperties": false
+        },
+        "qa": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*\\.(json|gpkg|txt)$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "sha256": {
+              "$ref": "common.schema.json#/$defs/sha"
+            },
+            "records": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": ["path", "bytes", "sha256", "records"],
+          "additionalProperties": false
+        },
+        "gis": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*\\.(json|gpkg|txt)$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "sha256": {
+              "$ref": "common.schema.json#/$defs/sha"
+            },
+            "records": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": ["path", "bytes", "sha256", "records"],
+          "additionalProperties": false
+        },
+        "notices": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*\\.(json|gpkg|txt)$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "sha256": {
+              "$ref": "common.schema.json#/$defs/sha"
+            },
+            "records": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": ["path", "bytes", "sha256", "records"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["nodes", "segments", "arcs", "inventory", "qa", "gis", "notices"],
+      "additionalProperties": false
+    },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "segments": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "arcs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": ["nodes", "segments", "arcs"],
+      "additionalProperties": false
+    },
+    "created_at": {
+      "$ref": "common.schema.json#/$defs/text"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "check": {
+            "$ref": "common.schema.json#/$defs/text"
+          },
+          "outcome": {
+            "enum": ["pass", "fail", "not_run"]
+          },
+          "detail": {
+            "$ref": "common.schema.json#/$defs/text"
+          }
+        },
+        "required": ["check", "outcome", "detail"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "release_id",
+    "graph_id",
+    "status",
+    "identity",
+    "coverage",
+    "diagnostics",
+    "crs",
+    "coordinate_order",
+    "length_unit",
+    "time_unit",
+    "travel_profile",
+    "wheelchair_accessibility",
+    "compatible_app_versions",
+    "files",
+    "counts",
+    "created_at",
+    "evidence"
+  ],
+  "additionalProperties": false,
+  "$id": "https://schemas.flm.example/network-package/v1/manifest.schema.json"
+}

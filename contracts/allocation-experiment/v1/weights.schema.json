@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Local experimental geometry measurements",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "polygonId", "sourceReleaseId", "coverage", "sets"],
+  "properties": {
+    "version": { "const": "allocation-weights-1" },
+    "polygonId": { "type": "string", "minLength": 1 },
+    "sourceReleaseId": { "type": "string", "minLength": 1 },
+    "coverage": { "const": "not_established" },
+    "sets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "stationIds", "operation", "variables", "rows"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "stationIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "operation": { "const": "geometric_union_before_intersection" },
+          "variables": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "sourceAreaSqft",
+                "intersectionAreaSqft",
+                "representativeCovered",
+                "counts"
+              ],
+              "properties": {
+                "id": { "type": "string", "minLength": 1 },
+                "sourceAreaSqft": { "type": "number", "exclusiveMinimum": 0 },
+                "intersectionAreaSqft": { "type": "number", "minimum": 0 },
+                "representativeCovered": { "type": "boolean" },
+                "counts": {
+                  "type": "object",
+                  "additionalProperties": { "type": ["number", "null"], "minimum": 0 }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

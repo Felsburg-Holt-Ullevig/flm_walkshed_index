@@ -1,0 +1,40 @@
+# Experimental package implementation briefs
+
+Status: Task 5.1 contract accepted; Task 5.2 local packaging, full offline validation and synthetic-only CI implemented. The regional package reuses accepted, hash-verified frozen upstream artifacts. Task 5.3 implements the runtime adapter and has local synthetic Chromium evidence; Gate 5A developer acceptance is pending. No public release or Census work is authorized by this brief.
+
+## Packaging and orchestration boundary
+
+Task 5.2 consumes completed, hash-verified frozen graph/classification/extraction/inventory reports and accepted policy/config/source identities. Do not require upstream regeneration merely because new downstream packaging files change the working checkout identity. Verify frozen producer identities against the accepted handoff; record the new packaging implementation identity separately. Do not reinterpret unknowns/restrictions or silently promote incomplete results. Keep raw files and previous outputs read-only.
+
+Task 5.2 implements the following operations:
+
+1. Add full schema validation in the separately locked Python environment, with license inventory and compatible wheel/hash-lock updates; do not use the design-test subset evaluator as production validation. Validate schema references/metaschemas locally. Test unknown fields/versions, duplicate keys, nonfinite/unsafe numbers and malformed JSON. Do not relax other lock pins to obtain a validator.
+2. Build a packaging adapter independent of upstream builders. Map included graph candidates to segments and their directed arcs to reference-only arcs; preserve original IDs and source geometry. Reconcile all counts, costs, direction and audit summaries. Produce a sanitized inventory with source/grain-specific reason totals, actual provenance/license evidence and explicit unknowns. Do not publish local paths, credentials, client documents or raw sources. Copy/reconcile actual derived GIS, notices and QA artifacts; no placeholder files or invented source identities.
+3. Implement content validation from the shared contract: filesystem containment, limits, exact checksums/bytes, envelope bindings, source membership, source-order geometry, direction, semantic digest, diagnostics and result status rules. Reopen all emitted files independently; validate GIS with the existing stack. Test missing/mixed/corrupt files, duplicate/missing arcs, swapped coordinates/endpoints, wrong cost/units and unknown source evidence. Schema validity alone cannot pass promotion.
+4. Add staging and immutable release promotion under ignored `data/`. Refuse existing release IDs; write manifest completion last. An interrupted/failed run leaves diagnostics but no consumable manifest. Enforce supervision/cleanup, check final file hashes, and never mutate a successful release to resume. Resume by verifying frozen prerequisites then rebuilding into a new staging/run/release ID. Raw sources and existing releases are never cleanup targets.
+5. Add complete-run orchestration with explicit source pin/inventory/extract/classify/graph/package order and per-stage identities. Reuse verified completed stages only if every required identity matches; fail stale dependencies rather than mixing them. Hash verification is not permission to repin sources. Distinguish synthetic CI workflow from private regional commands. Add small-fixture Python CI using the locked Windows environment while retaining existing frontend checks; no statewide downloads in CI.
+6. Turn the Task 5.1 authored synthetic examples into a real local release: generate valid QA/GIS/notices, manifest, and result manifest binding. Preserve literal 150-foot expectations and directional companions. Run twice with distinct release/run IDs and show equal semantic graph identity but separately recorded byte hashes. Mutate connectivity/direction/cost to prove semantic identity changes and validation catches inconsistent payloads. Report actual file sizes/resource observations; exceeding limits stops rather than shrinking geography.
+
+Outputs: `pipeline/tools/package_network.py` provides `prepare-release`, `validate-package`, and `build-synthetic`; the Windows lock includes the production JSON Schema validator; CI runs the locked offline suites and builds/validates two synthetic packages. Each synthetic release has a separate ignored literal expected-result sidecar bound to that run's actual manifest hash. The regional command verifies the raw source hash and accepted upstream identities, reuses the frozen graph (it does not rerun extraction/classification/graph assembly), validates the candidate under process supervision, and atomically promotes a new ignored package directory. The local runbook records actual commands, cleanup and resumption.
+
+The implementation uses these commands; all release IDs must be new:
+
+```text
+python pipeline/tools/package_network.py prepare-release --release-id <new-id>
+python pipeline/tools/package_network.py validate-package --manifest <release>/manifest.json
+python pipeline/tools/package_network.py build-synthetic --release-id <new-id>
+```
+
+## Runtime adapter and browser boundary
+
+Task 5.3 starts only after a real validated 5.2 fixture exists. Put fetch/JSON/schema/hash/resource/geodesic validation behind `src/adapters/`; generate or derive TypeScript types from shared schemas. Put authoritative browser cost/traversal/interval union in pure `src/domain/`, with no React, DOM, fetch, file or validator imports. Adapt source-node graph input explicitly; do not port Python I/O into domain code. Keep the source-node-only experimental profile visible.
+
+1. Select licensed schema runtime/type-generation tools with reported browser bundle effect. Register trusted schemas offline; no remote schema loading. Run the same structural negative corpus in Python and TypeScript. Test semantic hash parity against the reference fixture, including signed zero, array reorder, endpoint/direction and cost changes.
+2. Load into a temporary candidate. Validate manifest and required files fully before replacing the active graph. Enforce streaming byte caps and deadlines, relative subdirectory URLs and same-directory redirects. Test missing resources, HTML server fallback, unsupported app/schema/graph versions, mismatched release IDs, digest failure, cancellation and clean recovery preserving current work.
+3. Implement minimal source-node traversal with exact direction and partial-interval union. Reproduce the literal one-station output and directional/zero/missing-origin companions in actual domain calculations. Add selected accepted Python-reference source cases to a cross-language corpus without generating expected numbers from the function being tested. Keep regional limitations in results; no inferred station entrance, polygon or scores.
+4. Introduce Vitest and Playwright according to decision 0006. A browser test must fetch an actual package from the local served path and calculate the accepted result. Parsing tests alone cannot satisfy Gate 5A. Exercise root and subdirectory serving, invalid candidate recovery, visible error/status reporting, desktop/narrow layouts and keyboard access.
+5. Report measured browser file sizes, load/compute time and available memory observations without extrapolating Python performance. Run lint/typecheck/build and introduced tests. Update architecture/validation/runbook for actual interfaces. Gate 5A requires developer review of actual local browser loading and matching calculation; a CI pass or local package does not establish deployment or publication approval.
+
+## Acceptance and unresolved work
+
+The developer accepted the Task 5.1 contract, synthetic expectations and provisional limits before implementation. Task 5.2 does not change accepted OSM hashes or Phase 4 fixture bytes. The package contract deliberately supports diagnostic source-node input only. Manual station/rural/source-coverage questions remain deferred. Task 5.3 must validate and load the real synthetic package in the browser, then reproduce the literal expected result. Census schemas/methods begin after Gate 5A.

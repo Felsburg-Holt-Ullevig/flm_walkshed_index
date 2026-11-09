@@ -1,0 +1,9 @@
+osmium
+geopandas
+shapely
+pandas
+pyproj
+pyogrio
+pytest
+psutil
+setuptools==80.9.0

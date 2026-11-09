@@ -39,3 +39,6 @@ The concrete condition that would reopen the decision.
 | 0007 | [Preview hosting, relative base path, and deploy gating](0007-preview-hosting-relative-base-path-and-deploy-gating.md) | Accepted | 2026-10-29 |
 | 0008 | [Review, merge, and attribution policy](0008-review-merge-and-attribution-policy.md) | Accepted | 2026-10-29 |
 | 0009 | [Methodology without a reference model](0009-methodology-without-a-reference-model.md) | Accepted | 2026-10-29 |
+| 0010 | [General pedestrian walkshed and kerb policy](0010-general-pedestrian-walkshed-and-kerb-policy.md) | Accepted for experimental scope | 2026-11-03 |
+
+| 0011 | [User-defined origins and initial snapping rules](0011-user-defined-origins-and-snapping.md) | Accepted initial product rules; implementation pending | 2026-11-09 |

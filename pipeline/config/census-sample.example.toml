@@ -1,0 +1,33 @@
+# Copy to a private local file under data/staging/prototype/ after human review.
+# This example is intentionally non-runnable: acceptance and three exact source
+# hashes must be filled from an approved local record before the command works.
+config_version = "census-sample-1"
+specification_version = "census-sample-proposal-1"
+accepted_specification_version = ""
+state_fips = "08"
+county_fips = ["031", "073"]
+output_root = "data/generated/prototype/census-samples"
+cache_root = "data/generated/prototype/census-cache"
+
+[cache]
+snapshot_id = "initial-1"
+
+[limits]
+seconds = 1200
+rss_bytes = 4294967296
+
+[metadata]
+B01003_sha256 = ""
+B08201_sha256 = ""
+
+[sources.census_blocks]
+path = "data/raw/tl_2020_08_tabblock20.zip"
+expected_sha256 = ""
+
+[sources.census_block_groups]
+path = "data/raw/tl_2024_08_bg.zip"
+expected_sha256 = ""
+
+[sources.variables_catalog]
+path = "data/raw/variables.json"
+expected_sha256 = ""

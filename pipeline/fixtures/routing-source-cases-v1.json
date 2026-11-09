@@ -1,0 +1,176 @@
+{
+  "version": "routing-source-fixtures-1",
+  "status": "task_4_2_structural_fixture",
+  "construction": {
+    "format": "Literal JSON records are written to a temporary OSM PBF with PyOsmium SimpleWriter, then read by the production extractor.",
+    "crs": "EPSG:4326",
+    "equatorial_cases": "Nodes at latitude 0 use longitude steps of 0.001 degree. Independent expected length is (6378137 * pi / 180 * 0.001) / 0.3048 international feet.",
+    "other_cases": "Artificial positive longitude and latitude values keep every source node within the fixture extraction bounds. Their geometry is for topology only; no hand-set metric length is asserted.",
+    "tag_default": "Each way has highway=footway unless its literal tags below specify additional fields.",
+    "identity_rule": "Way references define connectivity. Equal coordinates do not merge different node IDs."
+  },
+  "nodes": [
+    {"id": "1001", "lon": 0.001, "lat": 0.0, "tags": {}},
+    {"id": "1002", "lon": 0.002, "lat": 0.0, "tags": {}},
+    {"id": "1003", "lon": 0.003, "lat": 0.0, "tags": {}},
+    {"id": "1201", "lon": 0.010, "lat": 0.0, "tags": {}},
+    {"id": "1202", "lon": 0.011, "lat": 0.0, "tags": {}},
+    {"id": "1301", "lon": 0.020, "lat": 0.0, "tags": {}},
+    {"id": "1302", "lon": 0.021, "lat": 0.0, "tags": {}},
+    {"id": "1401", "lon": 0.030, "lat": 0.0, "tags": {}},
+    {"id": "1402", "lon": 0.031, "lat": 0.0, "tags": {}},
+    {"id": "1501", "lon": 0.040, "lat": 0.0, "tags": {}},
+    {"id": "1502", "lon": 0.041, "lat": 0.0, "tags": {}},
+    {"id": "1503", "lon": 0.041, "lat": 0.0, "tags": {}},
+    {"id": "1504", "lon": 0.042, "lat": 0.0, "tags": {}},
+    {"id": "1603", "lon": 0.050, "lat": 0.0, "tags": {}},
+    {"id": "1604", "lon": 0.051, "lat": 0.0, "tags": {}},
+    {"id": "1702", "lon": 0.060, "lat": 0.001, "tags": {}},
+    {"id": "1703", "lon": 0.080, "lat": 0.001, "tags": {}},
+    {"id": "1705", "lon": 0.070, "lat": 0.0, "tags": {}},
+    {"id": "1706", "lon": 0.070, "lat": 0.002, "tags": {}},
+    {"id": "1802", "lon": 0.090, "lat": 0.001, "tags": {}},
+    {"id": "1803", "lon": 0.100, "lat": 0.001, "tags": {}},
+    {"id": "1804", "lon": 0.110, "lat": 0.001, "tags": {}},
+    {"id": "1806", "lon": 0.100, "lat": 0.002, "tags": {}},
+    {"id": "1807", "lon": 0.100, "lat": 0.003, "tags": {}},
+    {"id": "1902", "lon": 0.120, "lat": 0.001, "tags": {}},
+    {"id": "1903", "lon": 0.130, "lat": 0.001, "tags": {}},
+    {"id": "1904", "lon": 0.140, "lat": 0.001, "tags": {}},
+    {"id": "1906", "lon": 0.130, "lat": 0.0, "tags": {}},
+    {"id": "1907", "lon": 0.130, "lat": 0.001, "tags": {}},
+    {"id": "1908", "lon": 0.130, "lat": 0.002, "tags": {}},
+    {"id": "2101", "lon": 0.150, "lat": 0.001, "tags": {}},
+    {"id": "2102", "lon": 0.160, "lat": 0.001, "tags": {}},
+    {"id": "2103", "lon": 0.160, "lat": 0.002, "tags": {}},
+    {"id": "2104", "lon": 0.150, "lat": 0.002, "tags": {}},
+    {"id": "2105", "lon": 0.170, "lat": 0.001, "tags": {}},
+    {"id": "2201", "lon": 0.180, "lat": 0.0, "tags": {}},
+    {"id": "2202", "lon": 0.180, "lat": 0.001, "tags": {"barrier": "wall"}},
+    {"id": "2203", "lon": 0.180, "lat": 0.002, "tags": {}},
+    {"id": "2301", "lon": 0.190, "lat": 0.001, "tags": {"barrier": "kerb", "kerb": "raised", "wheelchair": "no"}},
+    {"id": "2302", "lon": 0.200, "lat": 0.001, "tags": {}},
+    {"id": "2401", "lon": 0.210, "lat": 0.001, "tags": {"barrier": "gate"}},
+    {"id": "2402", "lon": 0.220, "lat": 0.001, "tags": {}},
+    {"id": "2501", "lon": 0.230, "lat": 0.001, "tags": {}},
+    {"id": "2502", "lon": 0.240, "lat": 0.001, "tags": {}},
+    {"id": "2601", "lon": 0.250, "lat": 0.0, "tags": {}},
+    {"id": "2701", "lon": 0.260, "lat": 0.001, "tags": {}},
+    {"id": "2702", "lon": 0.260, "lat": 0.001, "tags": {}},
+    {"id": "2801", "lon": 0.270, "lat": 0.001, "tags": {}},
+    {"id": "9007199254740993", "lon": 0.251, "lat": 0.0, "tags": {}}
+  ],
+  "ways": [
+    {"id": "1101", "node_refs": ["1001", "1002", "1003"], "tags": {"highway": "footway"}},
+    {"id": "1201", "node_refs": ["1201", "1202"], "tags": {"highway": "footway"}},
+    {"id": "1301", "node_refs": ["1301", "1302"], "tags": {"highway": "footway", "oneway:foot": "yes"}},
+    {"id": "1401", "node_refs": ["1401", "1402"], "tags": {"highway": "footway", "oneway:foot": "-1"}},
+    {"id": "1511", "node_refs": ["1501", "1502"], "tags": {"highway": "footway"}},
+    {"id": "1512", "node_refs": ["1503", "1504"], "tags": {"highway": "footway"}},
+    {"id": "1611", "node_refs": ["1603", "1604"], "tags": {"highway": "footway"}},
+    {"id": "1612", "node_refs": ["1603", "1604"], "tags": {"highway": "footway"}},
+    {"id": "1711", "node_refs": ["1702", "1703"], "tags": {"highway": "footway"}},
+    {"id": "1712", "node_refs": ["1705", "1706"], "tags": {"highway": "footway", "bridge": "yes", "layer": "1"}},
+    {"id": "1811", "node_refs": ["1802", "1803", "1804"], "tags": {"highway": "footway"}},
+    {"id": "1812", "node_refs": ["1806", "1803", "1807"], "tags": {"highway": "footway"}},
+    {"id": "1911", "node_refs": ["1902", "1903", "1904"], "tags": {"highway": "footway"}},
+    {"id": "1912", "node_refs": ["1906", "1907", "1908"], "tags": {"highway": "footway"}},
+    {"id": "2111", "node_refs": ["2101", "2102", "2103", "2104", "2101"], "tags": {"highway": "footway"}},
+    {"id": "2112", "node_refs": ["2102", "2105"], "tags": {"highway": "footway"}},
+    {"id": "2211", "node_refs": ["2201", "2202"], "tags": {"highway": "footway"}},
+    {"id": "2212", "node_refs": ["2202", "2203"], "tags": {"highway": "footway"}},
+    {"id": "2311", "node_refs": ["2301", "2302"], "tags": {"highway": "footway"}},
+    {"id": "2411", "node_refs": ["2402", "2401"], "tags": {"highway": "footway"}},
+    {"id": "2511", "node_refs": ["2501", "2502"], "tags": {"highway": "footway", "access": "private"}},
+    {"id": "2611", "node_refs": ["2601", "9007199254740993"], "tags": {"highway": "footway"}},
+    {"id": "2711", "node_refs": ["2701", "2702"], "tags": {"highway": "footway"}},
+    {"id": "2811", "node_refs": ["2801", "2801"], "tags": {"highway": "footway"}}
+  ],
+  "expected_candidates": {
+    "include_both": [
+      "way/1101/segment/0", "way/1101/segment/1", "way/1201/segment/0",
+      "way/1511/segment/0", "way/1512/segment/0", "way/1611/segment/0", "way/1612/segment/0",
+      "way/1711/segment/0", "way/1712/segment/0", "way/1811/segment/0", "way/1811/segment/1",
+      "way/1812/segment/0", "way/1812/segment/1", "way/1911/segment/0", "way/1911/segment/1",
+      "way/1912/segment/0", "way/1912/segment/1", "way/2111/segment/0", "way/2111/segment/1",
+      "way/2111/segment/2", "way/2111/segment/3", "way/2112/segment/0", "way/2311/segment/0",
+      "way/2611/segment/0"
+    ],
+    "include_forward": ["way/1301/segment/0"],
+    "include_reverse": ["way/1401/segment/0"],
+    "unknown": ["way/2411/segment/0"],
+    "exclude_wall": ["way/2211/segment/0", "way/2212/segment/0"],
+    "exclude_private": ["way/2511/segment/0"],
+    "exclude_zero_length": ["way/2711/segment/0", "way/2811/segment/0"]
+  },
+  "topology_cases": {
+    "equatorial_chain": {
+      "way_ids": ["1101"],
+      "expected_segments": [["1001", "1002"], ["1002", "1003"]],
+      "expected_components": [["1001", "1002", "1003"]]
+    },
+    "disconnected": {
+      "way_ids": ["1101", "1201"],
+      "expected_components": [["1001", "1002", "1003"], ["1201", "1202"]]
+    },
+    "directional_alternatives": {
+      "way_ids": ["1301", "1401"],
+      "expected_arcs": [["1301", "1302"], ["1402", "1401"]],
+      "expected_components": [["1301", "1302"], ["1401", "1402"]]
+    },
+    "coincident_endpoint_ids": {
+      "way_ids": ["1511", "1512"],
+      "coincident_node_ids": ["1502", "1503"],
+      "expected_components": [["1501", "1502"], ["1503", "1504"]]
+    },
+    "parallel_source_segments": {
+      "way_ids": ["1611", "1612"],
+      "expected_candidate_ids": ["way/1611/segment/0", "way/1612/segment/0"],
+      "expected_components": [["1603", "1604"]]
+    },
+    "geometric_crossing_without_shared_node": {
+      "way_ids": ["1711", "1712"],
+      "expected_components": [["1702", "1703"], ["1705", "1706"]]
+    },
+    "shared_junction_node": {
+      "way_ids": ["1811", "1812"],
+      "shared_node_id": "1803",
+      "expected_components": [["1802", "1803", "1804", "1806", "1807"]]
+    },
+    "coincident_midpoint_distinct_ids": {
+      "way_ids": ["1911", "1912"],
+      "coincident_node_ids": ["1903", "1907"],
+      "expected_components": [["1902", "1903", "1904"], ["1906", "1907", "1908"]]
+    },
+    "loop_and_branch": {
+      "way_ids": ["2111", "2112"],
+      "expected_components": [["2101", "2102", "2103", "2104", "2105"]]
+    }
+  },
+  "policy_cases": {
+    "wall_node_id": "2202",
+    "kerb_node_id": "2301",
+    "gate_node_id": "2401",
+    "private_way_id": "2511",
+    "large_id": "9007199254740993",
+    "distinct_id_zero_length_candidate_id": "way/2711/segment/0",
+    "same_id_zero_length_candidate_id": "way/2811/segment/0"
+  },
+  "malformed_source_cases": {
+    "missing_node_reference": {
+      "nodes": [{"id": "3101", "lon": 0.3, "lat": 0.0, "tags": {}}],
+      "ways": [{"id": "3111", "node_refs": ["3101", "3199"], "tags": {"highway": "footway"}}]
+    },
+    "duplicate_node_id": {
+      "nodes": [
+        {"id": "3201", "lon": 0.3, "lat": 0.0, "tags": {}},
+        {"id": "3201", "lon": 0.31, "lat": 0.0, "tags": {}}
+      ],
+      "ways": []
+    },
+    "nonfinite_coordinate": {
+      "node": {"id": "3301", "lon": "NaN", "lat": 0.0, "tags": {}},
+      "note": "Standard OSM PBF coordinates are encoded as bounded integer positions, so NaN is not a valid PBF record. The extractor coordinate validator rejects this malformed decoded value directly."
+    }
+  }
+}

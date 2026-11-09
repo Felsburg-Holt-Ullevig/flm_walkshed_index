@@ -1,0 +1,45 @@
+# Accepted experimental specification data only. No current CLI consumes this file.
+benchmark_version = "routing-benchmarks-1"
+status = "accepted_experimental"
+reference_spec = "pipeline/routing-reference-spec.md"
+reference_data = "pipeline/fixtures/routing-references-v1.json"
+rule_version = "pedestrian-policy-0.3"
+scenario_id = "public-walk-experiment-0.3"
+time_budget_seconds = 600
+speed_mph = 2.796170365068003
+length_unit = "international_foot"
+time_unit = "second"
+complete_regional_runs_enabled = false
+coverage_status = "not_established"
+
+[[origins]]
+id = "union-vicinity-source-node-1"
+mode = "verified_source_node"
+source_node_id = "7581419196"
+longitude = -105.0004685
+latitude = 39.7529095
+coordinate_crs = "EPSG:4326"
+source_membership = "verified_against_canonical_and_graph_records"
+station_entrance_status = "not_verified"
+execution_status = "authorized_for_task_4_3_diagnostic_only"
+access_cost_seconds = 0
+# This is the exact source coordinate; the illustrative station is not snapped.
+
+[edge_origin_experiment]
+enabled = false
+acceptance_required = false
+implementation_status = "authorized_for_task_4_3_not_implemented"
+maximum_snap_distance_ft = 100
+access_cost_model = "geodesic_distance_at_base_walking_speed"
+tie_distance_ft = 0.01
+tie_behavior = "ambiguous_origin_requires_explicit_candidate"
+allowed_candidates = "included_only"
+connector_claim = "geometric_experiment_not_verified_walkable_access"
+
+[coverage_comparison]
+original_bbox = [-105.08, 39.68, -104.93, 39.83]
+expanded_bbox = [-105.12, 39.64, -104.89, 39.87]
+common_core_bbox = [-105.04, 39.72, -104.97, 39.79]
+source_bytes = "must_match"
+comparison_status = "not_run"
+matching_outputs_establish_completeness = false

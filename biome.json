@@ -1,11 +1,33 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
-  "files": { "includes": ["**", "!pnpm-lock.yaml", "!**/*.md"] },
-  "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 2, "lineWidth": 100 },
-  "javascript": { "formatter": { "quoteStyle": "single" } },
-  "linter": { "enabled": true, "rules": { "preset": "recommended" } },
-  "assist": { "enabled": true },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "includes": ["**", "!pnpm-lock.yaml", "!**/*.md"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended"
+    }
+  },
+  "assist": {
+    "enabled": true
+  },
   "overrides": [
     {
       "includes": ["src/domain/**"],
@@ -39,6 +61,19 @@
             }
           }
         }
+      }
+    },
+    {
+      "includes": [
+        "pipeline/fixtures/network-package-v1/inventory.json",
+        "pipeline/fixtures/network-package-v1/manifest.example.json",
+        "pipeline/fixtures/network-package-v1/nodes.json",
+        "pipeline/fixtures/network-package-v1/segments.json",
+        "pipeline/fixtures/routing-references-v1.json",
+        "pipeline/fixtures/routing-source-cases-v1.json"
+      ],
+      "formatter": {
+        "enabled": false
       }
     }
   ]

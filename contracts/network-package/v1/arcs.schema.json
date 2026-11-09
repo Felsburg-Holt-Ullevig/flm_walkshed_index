@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "flm-arcs-1"
+    },
+    "release_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "graph_id": {
+      "$ref": "common.schema.json#/$defs/sha"
+    },
+    "arcs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "edge_id": {
+            "$ref": "common.schema.json#/$defs/id"
+          },
+          "candidate_id": {
+            "$ref": "common.schema.json#/$defs/id"
+          },
+          "from_node_id": {
+            "$ref": "common.schema.json#/$defs/source_id"
+          },
+          "to_node_id": {
+            "$ref": "common.schema.json#/$defs/source_id"
+          },
+          "direction": {
+            "enum": ["forward", "reverse"]
+          }
+        },
+        "required": ["edge_id", "candidate_id", "from_node_id", "to_node_id", "direction"],
+        "additionalProperties": false
+      },
+      "maxItems": 1400000
+    }
+  },
+  "required": ["schema_version", "release_id", "graph_id", "arcs"],
+  "additionalProperties": false,
+  "$id": "https://schemas.flm.example/network-package/v1/arcs.schema.json"
+}
