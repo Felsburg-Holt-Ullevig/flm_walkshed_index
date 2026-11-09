@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "flm-pipeline"
 version = "0.1.0"
 description = "Offline source inspection and GIS preparation for the FLM walkshed prototype"
-requires-python = "==3.12.14"
+requires-python = ">=3.12.10,<3.13"
 dependencies = [
     "geopandas>=1.0,<2",
     "osmium>=4.0,<5",

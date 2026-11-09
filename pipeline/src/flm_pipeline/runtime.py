@@ -63,8 +63,8 @@ def runtime_errors(
     errors = []
     if implementation != "cpython":
         errors.append(f"Expected CPython; found {implementation}")
-    if tuple(version) != (3, 12, 14):
-        errors.append(f"Expected Python 3.12.14; found {'.'.join(map(str, version))}")
+    if tuple(version) not in {(3, 12, 10), (3, 12, 14)}:
+        errors.append(f"Expected Python 3.12.10 or 3.12.14; found {'.'.join(map(str, version))}")
     if system != "Windows" or machine.lower() not in {"amd64", "x86_64"}:
         errors.append(f"Expected Windows x86-64; found {system} {machine}")
     return errors

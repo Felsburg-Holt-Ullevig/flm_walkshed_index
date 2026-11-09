@@ -92,3 +92,13 @@ The browser loads a versioned synthetic package through validated adapters and c
 [Decision 0011](docs/decisions/0011-user-defined-origins-and-snapping.md) specifies future user-defined origins: the closest walkable segment position or node within 500 feet, no connector-time deduction, northernmost snap point for exact distance ties, and flagged rejection when no candidate is within range. Successful snaps need no flag. This behavior is specified but not implemented in the browser harness. Historical 100-foot charged-access reference cases retain their accepted expectations.
 
 Use the [prototype overview](docs/prototype-overview.md), [independent review guide](docs/independent-review.md), [pipeline commands](pipeline/README.md), [network contract](contracts/network-package/v1/README.md) and [allocation contract](contracts/allocation-experiment/v1/README.md) as current entry points. Local review packets and regional artifacts are excluded from Git; a public clone supports synthetic reproduction and needs separately supplied approved inputs for regional processing.
+
+
+## CI runtime availability
+
+The Windows CI job pins CPython 3.12.10 because actions/setup-python cannot
+provide the local 3.12.14 build on the hosted Windows runner. Runtime validation
+accepts exactly Windows x86-64 CPython 3.12.10 or 3.12.14. Existing CPython 3.12
+wheel versions and SHA-256 locks remain unchanged; CI verifies their installation
+and synthetic behavior on 3.12.10. Historical local results retain their recorded
+3.12.14 environment identity. Other patch versions remain unsupported by doctor.

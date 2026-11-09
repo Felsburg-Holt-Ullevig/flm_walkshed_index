@@ -17,9 +17,9 @@ if (-not (Test-Path -LiteralPath $resolvedPython -PathType Leaf)) {
 
 & $resolvedPython --version
 if ($LASTEXITCODE -ne 0) { throw 'Base Python could not run.' }
-$runtimeCheck = 'import platform, sys; sys.exit(0 if sys.implementation.name == "cpython" and sys.version_info[:3] == (3, 12, 14) and platform.system() == "Windows" and platform.machine().lower() in ("amd64", "x86_64") else 1)'
+$runtimeCheck = 'import platform, sys; sys.exit(0 if sys.implementation.name == "cpython" and sys.version_info[:3] in ((3, 12, 10), (3, 12, 14)) and platform.system() == "Windows" and platform.machine().lower() in ("amd64", "x86_64") else 1)'
 & $resolvedPython -c $runtimeCheck
-if ($LASTEXITCODE -ne 0) { throw 'Base Python must be CPython 3.12.14 on Windows x86-64.' }
+if ($LASTEXITCODE -ne 0) { throw 'Base Python must be CPython 3.12.10 or 3.12.14 on Windows x86-64.' }
 if (Test-Path -LiteralPath $venvPath) {
     throw "Environment already exists at $venvPath. Remove it explicitly before recreating."
 }

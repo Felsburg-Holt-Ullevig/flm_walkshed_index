@@ -67,3 +67,13 @@ Run from the repository root in PowerShell:
 ```
 
 `doctor` validates the supported runtime, installed packages, strict TOML settings, source-file presence, and output separation. `smoke` samples PBF node, way, and relation streams; reads a bounded feature sample from each Census archive; writes and reopens node, line, and polygon GeoPackage layers; records a JSON run report; and enforces the configured timeout and sampled process-tree RSS limit. This is source-I/O evidence only. Full file hashes, archive CRC checks, counts, and provenance remain part of task 1.3.
+
+
+## CI runtime availability
+
+The Windows CI job pins CPython 3.12.10 because actions/setup-python cannot
+provide the local 3.12.14 build on the hosted Windows runner. Runtime validation
+accepts exactly Windows x86-64 CPython 3.12.10 or 3.12.14. Existing CPython 3.12
+wheel versions and SHA-256 locks remain unchanged; CI verifies their installation
+and synthetic behavior on 3.12.10. Historical local results retain their recorded
+3.12.14 environment identity. Other patch versions remain unsupported by doctor.
