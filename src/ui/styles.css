@@ -27,3 +27,40 @@ footer {
 footer p {
   margin: 0;
 }
+
+main {
+  max-width: 60rem;
+  margin: auto;
+}
+label {
+  display: block;
+  margin: 1rem 0;
+}
+input {
+  display: block;
+  width: 100%;
+  padding: 0.6rem;
+  font: inherit;
+}
+button {
+  padding: 0.7rem;
+  margin-right: 0.5rem;
+  font: inherit;
+}
+pre {
+  overflow: auto;
+  padding: 1rem;
+  background: #f3f4f6;
+}
+:focus-visible {
+  outline: 3px solid #155abd;
+  outline-offset: 3px;
+}
+@media (max-width: 480px) {
+  main {
+    padding: 1rem;
+  }
+  h1 {
+    font-size: 1.6rem;
+  }
+}

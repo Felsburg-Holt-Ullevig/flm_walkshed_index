@@ -1,0 +1,109 @@
+{
+  "schema_version": "flm-package-1",
+  "release_id": "synthetic-f01-v1",
+  "graph_id": "886b81210aeb8574a9f0e3afd3c469841f455c071fc7f9becb20e6f4c65599c4",
+  "status": "complete_experimental",
+  "identity": {
+    "graph_format": "flm-directed-graph-1",
+    "rule_version": "synthetic-metric-1",
+    "scenario_id": "synthetic-f01",
+    "rule_sha256": "19ccd9afb35b9059f8d6d06eb7779f7f812905612735e83b8f8621ddbaf56f76",
+    "code_sha256": "6b45995db0e454dde89fe03c21dc12451e1250c91353a6e141d96f8c1f9d9870",
+    "config_sha256": "8f0da20ad4b47aa27ca1282b5cb9b4df689effa674df178b90c718f016ed49da",
+    "source_inventory_sha256": "a3e2ce089fe1115165625cd04963c9c1018e390f8ac6e8e2d099a75eae579932",
+    "length_model": "synthetic_declared_ft",
+    "seconds_per_foot": 0.24384
+  },
+  "coverage": {
+    "core_bbox": [
+      -105.01,
+      39.74,
+      -104.99,
+      39.76
+    ],
+    "extract_bbox": [
+      -105.02,
+      39.73,
+      -104.98,
+      39.77
+    ],
+    "selection": "synthetic_closed",
+    "readiness": "synthetic_closed",
+    "limitations": [
+      "Illustrative coordinates do not define the declared metric lengths."
+    ]
+  },
+  "diagnostics": {
+    "unknown_candidates": 0,
+    "unsupported_restrictions": 0,
+    "unresolved_relation_members": 0,
+    "blockers": [],
+    "analytical_promotion": "blocked_experimental"
+  },
+  "crs": "EPSG:4326",
+  "coordinate_order": "longitude_latitude",
+  "length_unit": "international_foot",
+  "time_unit": "second",
+  "travel_profile": "general_pedestrian",
+  "wheelchair_accessibility": "not_evaluated",
+  "compatible_app_versions": [
+    "0.1.0"
+  ],
+  "files": {
+    "nodes": {
+      "path": "nodes.json",
+      "bytes": 464,
+      "sha256": "f9b1cfdc646637ed2e4762cab8aa2ea809e51ce56531b23182ad5eb469b61758",
+      "records": 3
+    },
+    "segments": {
+      "path": "segments.json",
+      "bytes": 933,
+      "sha256": "16f8b4cba614c8da3299431554ec8b69493e7a8b21cbf40279d501618eb857a7",
+      "records": 2
+    },
+    "arcs": {
+      "path": "arcs.json",
+      "bytes": 714,
+      "sha256": "1b60471f04bd229f3b70838f2ada3620e1ec167851c1c3b0dbf2b8501a89c405",
+      "records": 3
+    },
+    "inventory": {
+      "path": "inventory.json",
+      "bytes": 541,
+      "sha256": "a3e2ce089fe1115165625cd04963c9c1018e390f8ac6e8e2d099a75eae579932",
+      "records": 1
+    },
+    "qa": {
+      "path": "qa.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "records": 0
+    },
+    "gis": {
+      "path": "routing.gpkg",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "records": 0
+    },
+    "notices": {
+      "path": "notices.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "records": 0
+    }
+  },
+  "counts": {
+    "nodes": 3,
+    "segments": 2,
+    "arcs": 3
+  },
+  "created_at": "2026-11-04T00:00:00Z",
+  "evidence": [
+    {
+      "check": "example_only",
+      "outcome": "not_run",
+      "detail": "Not a promoted release. QA/GIS/notices placeholders must be replaced in Task 5.2."
+    }
+  ]
+}

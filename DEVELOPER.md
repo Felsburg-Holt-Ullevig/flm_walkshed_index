@@ -2,13 +2,13 @@
 
 ## What exists today
 
-The repository has a minimal React/TypeScript/Vite application, shared contribution guidance, lint, typecheck, and build checks, and a CI workflow that deploys a development preview. It does not yet load GIS data or perform calculations. The [architecture overview](architecture_overview.md) describes the boundary between implemented structure and planned capabilities, and [requirements](docs/requirements.md) lists what the finished application must do.
+The repository has a React/TypeScript/Vite prototype, shared contribution guidance, lint, typecheck, and build checks, and a CI workflow that deploys a development preview. It now includes an experimental validated network-package loader and source-node reachability harness. See [local browser review](pipeline/browser-network-review.md) for setup, literal results and limitations. The [architecture overview](architecture_overview.md) describes the boundary between implemented structure and planned capabilities, and [requirements](docs/requirements.md) lists what the finished application must do.
 
 The source repository is [Felsburg-Holt-Ullevig/flm_walkshed_index](https://github.com/Felsburg-Holt-Ullevig/flm_walkshed_index). `main` is the integration branch. Changes are reviewed on feature branches before merging. A GitHub source page or a green check is not a deployed website.
 
 ## Setup
 
-Required versions: Node 24.19.0 and pnpm 11.25.0. Installation fails on any other Node version by design (`engineStrict`).
+Use Node 24.19.0 from `.node-version` for CI parity and pnpm 11.25.0. `package.json` permits Node >=24.19.0 <25 and pnpm >=11.25.0 <12; `engineStrict` rejects versions outside those ranges.
 
 **Windows**
 
@@ -23,7 +23,7 @@ Use a Node version manager to install 24.19.0 (for example `fnm install 24.19.0`
 
 **Cloud agent containers**
 
-Containers may ship another Node version. The install fails with an engine error until Node 24.19.0 is on `PATH`.
+Containers may ship another Node version. The install fails with an engine error until a supported Node 24 version is on `PATH`.
 
 Node is pinned in `.node-version` and enforced by `engineStrict` in `pnpm-workspace.yaml`; pnpm is pinned by `packageManager` in `package.json`. Dependency versions are saved exactly (`saveExact`) and `pnpm-lock.yaml` is committed. Do not introduce a second lockfile. A normal clone needs no credentials for installation of the public packages selected here.
 
@@ -54,14 +54,14 @@ Both servers bind to the local computer and use fixed ports. If a port is occupi
 
 Two repository rulesets on `main` implement this:
 
-- **main – safety and CI** (no bypass): changes reach `main` only through a pull request; the `Verify foundation` check must pass with an up-to-date branch; conversations must be resolved; force pushes and branch deletion are blocked.
-- **main – review**: one approval and code-owner review are required. Repository admins may bypass this ruleset on pull requests only, which lets the lead merge their own PRs after CI passes.
+- **main â€“ safety and CI** (no bypass): changes reach `main` only through a pull request; the `Verify foundation` check must pass with an up-to-date branch; conversations must be resolved; force pushes and branch deletion are blocked.
+- **main â€“ review**: one approval and code-owner review are required. Repository admins may bypass this ruleset on pull requests only, which lets the lead merge their own PRs after CI passes.
 
 `.github/CODEOWNERS` requests the lead's review on every change. Methodology acceptance requires the designated reviewers' approval (see [methodology](docs/methodology.md)). Independent technical/GIS review is appropriate for major analytical boundaries and release readiness.
 
 ## Commit identity
 
-Use your GitHub noreply address. Project lead: `Casey Walrath <256605663+caseywalrath@users.noreply.github.com>`. Other contributors: find yours under GitHub **Settings → Emails**.
+Use your GitHub noreply address. Project lead: `Casey Walrath <256605663+caseywalrath@users.noreply.github.com>`. Other contributors: find yours under GitHub **Settings â†’ Emails**.
 
 ## Requesting and reviewing changes
 
@@ -81,9 +81,9 @@ Write public change descriptions and comments in neutral technical language: exp
 
 ## Automated checks and deployment
 
-The single `CI` workflow runs for PRs, pushes to `main`, and manual dispatch. On PRs it installs from the frozen lockfile, lints, typechecks, and builds (`Verify foundation`). On `main`, it then deploys the verified build to GitHub Pages (`Deploy GitHub Pages`); a failed verification prevents deployment. Neither job claims GIS accuracy, accessibility conformance, or test coverage. See [validation](docs/validation.md).
+The single `CI` workflow runs for PRs, pushes to `main`, and manual dispatch. On PRs it verifies schemas, unit tests, lint, typechecking and build (`Verify foundation`), plus the locked Windows pipeline suites, synthetic package builds and Chromium checks (`Verify offline pipeline`). On `main`, it then deploys the verified build to GitHub Pages (`Deploy GitHub Pages`); a failed verification prevents deployment. Neither job claims GIS accuracy, accessibility conformance, or test coverage. See [validation](docs/validation.md).
 
-Pages must have **Settings → Pages → Build and deployment → Source** set to **GitHub Actions**. After a deployment, GitHub reports the site URL in the Actions run and the `github-pages` environment. The build uses relative asset paths, so the same output works at the Pages project URL and in a subdirectory. The page footer shows the short commit identifier of the deployed build. Pages hosts the current scaffold as a public development preview; it is not a CDOT environment.
+Pages must have **Settings â†’ Pages â†’ Build and deployment â†’ Source** set to **GitHub Actions**. After a deployment, GitHub reports the site URL in the Actions run and the `github-pages` environment. The build uses relative asset paths, so the same output works at the Pages project URL and in a subdirectory. The page footer shows the short commit identifier of the deployed build. Pages hosts the current scaffold as a public development preview; it is not a CDOT environment.
 
 Dependabot proposes monthly, grouped updates for application and Actions dependencies. `@types/node` major versions are ignored because they follow `.node-version`. Review and test updates; there is no automatic merge or deployment.
 

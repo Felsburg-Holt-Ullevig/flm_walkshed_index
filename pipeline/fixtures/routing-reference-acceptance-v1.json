@@ -1,0 +1,21 @@
+{
+  "version": "routing-reference-acceptance-1",
+  "status": "accepted_experimental",
+  "accepted_on": "2026-11-03",
+  "scope": "Experimental reference expectations and tolerances for Tasks 4.2 and 4.3 only. This does not approve authoritative methodology, complete regional analysis, source hash pinning, or a verified station entrance.",
+  "accepted_settings": {
+    "time_budget_seconds": 600,
+    "diagnostic_source_node_id": "7581419196",
+    "station_entrance_verified": false,
+    "edge_origin_maximum_distance_ft": 100,
+    "edge_access_cost": "charged_at_accepted_walking_speed",
+    "ambiguous_edge_origin_ties": "require_explicit_candidate",
+    "complete_regional_runs_enabled": false,
+    "coverage_status": "not_established"
+  },
+  "sha256": {
+    "pipeline/routing-reference-spec.md": "27b976e2616bc0c8a7a48039152b4d17535f9f734edea3811ec855fc4273e1cc",
+    "pipeline/fixtures/routing-references-v1.json": "f3353bc1ab212831ea92d037b65a5283a8d0750a02f0d4ff2522a7430e493c64",
+    "pipeline/config/routing-benchmarks.v1.toml": "93e0f5960ca31afd7b616335684ceefb5c8fbdf825ba80028a0ed128e691e396"
+  }
+}

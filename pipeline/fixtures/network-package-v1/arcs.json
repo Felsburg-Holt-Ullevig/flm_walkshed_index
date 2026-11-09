@@ -1,0 +1,28 @@
+{
+  "schema_version": "flm-arcs-1",
+  "release_id": "synthetic-f01-v1",
+  "graph_id": "886b81210aeb8574a9f0e3afd3c469841f455c071fc7f9becb20e6f4c65599c4",
+  "arcs": [
+    {
+      "edge_id": "way/10/segment/0/forward",
+      "candidate_id": "way/10/segment/0",
+      "from_node_id": "1",
+      "to_node_id": "2",
+      "direction": "forward"
+    },
+    {
+      "edge_id": "way/10/segment/0/reverse",
+      "candidate_id": "way/10/segment/0",
+      "from_node_id": "2",
+      "to_node_id": "1",
+      "direction": "reverse"
+    },
+    {
+      "edge_id": "way/10/segment/1/forward",
+      "candidate_id": "way/10/segment/1",
+      "from_node_id": "2",
+      "to_node_id": "3",
+      "direction": "forward"
+    }
+  ]
+}

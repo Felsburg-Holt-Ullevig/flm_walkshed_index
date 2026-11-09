@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "flm-inventory-1"
+    },
+    "inventory_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "$ref": "common.schema.json#/$defs/id"
+          },
+          "kind": {
+            "enum": ["osm", "synthetic"]
+          },
+          "sha256": {
+            "$ref": "common.schema.json#/$defs/sha"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "url": {
+            "anyOf": [
+              {
+                "$ref": "common.schema.json#/$defs/text"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "downloaded_at": {
+            "anyOf": [
+              {
+                "$ref": "common.schema.json#/$defs/text"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "claimed_vintage": {
+            "anyOf": [
+              {
+                "$ref": "common.schema.json#/$defs/text"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "observed_vintage": {
+            "anyOf": [
+              {
+                "$ref": "common.schema.json#/$defs/text"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provenance_status": {
+            "$ref": "common.schema.json#/$defs/text"
+          },
+          "license": {
+            "$ref": "common.schema.json#/$defs/text"
+          },
+          "attribution": {
+            "$ref": "common.schema.json#/$defs/text"
+          },
+          "redistribution": {
+            "enum": ["not_cleared", "synthetic_only"]
+          },
+          "excluded_records": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "unknown_records": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "reason_counts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "reason": {
+                  "$ref": "common.schema.json#/$defs/text"
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": ["reason", "count"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "source_id",
+          "kind",
+          "sha256",
+          "bytes",
+          "url",
+          "downloaded_at",
+          "claimed_vintage",
+          "observed_vintage",
+          "provenance_status",
+          "license",
+          "attribution",
+          "redistribution",
+          "excluded_records",
+          "unknown_records",
+          "reason_counts"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 32
+    }
+  },
+  "required": ["schema_version", "inventory_id", "sources"],
+  "additionalProperties": false,
+  "$id": "https://schemas.flm.example/network-package/v1/inventory.schema.json"
+}

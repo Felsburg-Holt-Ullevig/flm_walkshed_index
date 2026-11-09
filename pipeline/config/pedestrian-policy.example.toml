@@ -1,0 +1,27 @@
+# Accepted experimental settings consumed by the Task 3.2 classify command.
+rule_version = "pedestrian-policy-0.3"
+scenario_id = "public-walk-experiment-0.3"
+status = "accepted_experimental"
+rule_authority = "pipeline/pedestrian-policy.md"
+comparison_scenario_id = "reference-classification-6068f1b"
+reference_revision = "6068f1b8719d025426443230bb4a39a296b4f583"
+
+[cost]
+length_unit = "international_foot"
+time_unit = "second"
+speed_mph = 2.796170365068003
+feet_per_mile = 5280
+meters_per_international_foot = 0.3048
+crossing_delay_model = "not_modeled"
+steps_cost_model = "same_base_speed_with_warning"
+slope_cost_model = "not_modeled"
+
+[origin]
+mode = "verified_source_node"
+access_connectors = "disabled"
+snap_distance_ft = "not_defined"
+
+[completeness]
+unknown_candidates = "block_analytical_promotion"
+unknown_node = "quarantine_incident_segments"
+blocked_node = "exclude_incident_segments"

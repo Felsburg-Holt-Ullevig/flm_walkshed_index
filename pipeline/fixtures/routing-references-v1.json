@@ -1,0 +1,804 @@
+{
+  "version": "routing-references-1",
+  "status": "accepted_experimental",
+  "fixture_layer": "declared_metric_graph_not_production_graph_input",
+  "node_labels": "symbolic_fixture_local_not_OSM_IDs",
+  "seconds_per_foot": "0.24384",
+  "omitted_segment_intervals": "empty",
+  "omitted_node_distances": "not_reached_within_budget",
+  "cases": [
+    {
+      "id": "F01",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        },
+        {
+          "id": "BC",
+          "from": "B",
+          "to": "C",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "node": "A"
+      },
+      "budget_distance_equivalent_ft": 150,
+      "expected_node_distances_ft": {
+        "A": 0,
+        "B": 100
+      },
+      "expected_intervals_ft": {
+        "AB": [
+          [
+            0,
+            100
+          ]
+        ],
+        "BC": [
+          [
+            0,
+            50
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 150,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F02",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        },
+        {
+          "id": "BC",
+          "from": "B",
+          "to": "C",
+          "length_ft": 100,
+          "direction": "both"
+        },
+        {
+          "id": "BD",
+          "from": "B",
+          "to": "D",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "node": "A"
+      },
+      "budget_distance_equivalent_ft": 150,
+      "expected_node_distances_ft": {
+        "A": 0,
+        "B": 100
+      },
+      "expected_intervals_ft": {
+        "AB": [
+          [
+            0,
+            100
+          ]
+        ],
+        "BC": [
+          [
+            0,
+            50
+          ]
+        ],
+        "BD": [
+          [
+            0,
+            50
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 200,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F03",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        },
+        {
+          "id": "BC",
+          "from": "B",
+          "to": "C",
+          "length_ft": 100,
+          "direction": "both"
+        },
+        {
+          "id": "CD",
+          "from": "C",
+          "to": "D",
+          "length_ft": 100,
+          "direction": "both"
+        },
+        {
+          "id": "DA",
+          "from": "D",
+          "to": "A",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "node": "A"
+      },
+      "budget_distance_equivalent_ft": 150,
+      "expected_node_distances_ft": {
+        "A": 0,
+        "B": 100,
+        "D": 100
+      },
+      "expected_intervals_ft": {
+        "AB": [
+          [
+            0,
+            100
+          ]
+        ],
+        "BC": [
+          [
+            0,
+            50
+          ]
+        ],
+        "CD": [
+          [
+            50,
+            100
+          ]
+        ],
+        "DA": [
+          [
+            0,
+            100
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 300,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F04",
+      "edges": [
+        {
+          "id": "short",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        },
+        {
+          "id": "long",
+          "from": "A",
+          "to": "B",
+          "length_ft": 200,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "node": "A"
+      },
+      "budget_distance_equivalent_ft": 120,
+      "expected_node_distances_ft": {
+        "A": 0,
+        "B": 100
+      },
+      "expected_intervals_ft": {
+        "short": [
+          [
+            0,
+            100
+          ]
+        ],
+        "long": [
+          [
+            0,
+            120
+          ],
+          [
+            180,
+            200
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 240,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F05",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        },
+        {
+          "id": "CD",
+          "from": "C",
+          "to": "D",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "node": "A"
+      },
+      "budget_distance_equivalent_ft": 200,
+      "expected_node_distances_ft": {
+        "A": 0,
+        "B": 100
+      },
+      "expected_intervals_ft": {
+        "AB": [
+          [
+            0,
+            100
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 100,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F06",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "forward"
+        }
+      ],
+      "origin": {
+        "node": "B"
+      },
+      "budget_distance_equivalent_ft": 100,
+      "expected_node_distances_ft": {
+        "B": 0
+      },
+      "expected_intervals_ft": {},
+      "expected_unique_source_length_ft": 0,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F06-alternative",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "forward"
+        }
+      ],
+      "origin": {
+        "node": "A"
+      },
+      "budget_distance_equivalent_ft": 100,
+      "expected_node_distances_ft": {
+        "A": 0,
+        "B": 100
+      },
+      "expected_intervals_ft": {
+        "AB": [
+          [
+            0,
+            100
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 100,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F07",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "reverse"
+        }
+      ],
+      "origin": {
+        "node": "A"
+      },
+      "budget_distance_equivalent_ft": 100,
+      "expected_node_distances_ft": {
+        "A": 0
+      },
+      "expected_intervals_ft": {},
+      "expected_unique_source_length_ft": 0,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F07-alternative",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "reverse"
+        }
+      ],
+      "origin": {
+        "node": "B"
+      },
+      "budget_distance_equivalent_ft": 100,
+      "expected_node_distances_ft": {
+        "B": 0,
+        "A": 100
+      },
+      "expected_intervals_ft": {
+        "AB": [
+          [
+            0,
+            100
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 100,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F08",
+      "edges": [],
+      "origin": {
+        "node": "A"
+      },
+      "budget_distance_equivalent_ft": 200,
+      "expected_node_distances_ft": null,
+      "expected_intervals_ft": null,
+      "expected_unique_source_length_ft": null,
+      "expected_status": "no_network",
+      "source_edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        },
+        {
+          "id": "BC",
+          "from": "B",
+          "to": "C",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "source_node_tags": {
+        "B": {
+          "barrier": "wall"
+        }
+      },
+      "excluded_source_edges": [
+        "AB",
+        "BC"
+      ]
+    },
+    {
+      "id": "F09",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        },
+        {
+          "id": "CD",
+          "from": "C",
+          "to": "D",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "node": "A"
+      },
+      "budget_distance_equivalent_ft": 200,
+      "expected_node_distances_ft": {
+        "A": 0,
+        "B": 100
+      },
+      "expected_intervals_ft": {
+        "AB": [
+          [
+            0,
+            100
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 100,
+      "layout_ft": {
+        "A": [
+          -50,
+          0
+        ],
+        "B": [
+          50,
+          0
+        ],
+        "C": [
+          0,
+          -50
+        ],
+        "D": [
+          0,
+          50
+        ]
+      },
+      "source_edge_tags": {
+        "CD": {
+          "bridge": "yes",
+          "layer": "1"
+        }
+      },
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F10",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        },
+        {
+          "id": "CD",
+          "from": "C",
+          "to": "D",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "node": "A"
+      },
+      "budget_distance_equivalent_ft": 200,
+      "expected_node_distances_ft": {
+        "A": 0,
+        "B": 100
+      },
+      "expected_intervals_ft": {
+        "AB": [
+          [
+            0,
+            100
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 100,
+      "layout_ft": {
+        "A": [
+          0,
+          0
+        ],
+        "B": [
+          100,
+          0
+        ],
+        "C": [
+          100,
+          0
+        ],
+        "D": [
+          200,
+          0
+        ]
+      },
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F11",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "segment": "AB",
+        "offset_ft": 50,
+        "access_distance_ft": 0
+      },
+      "budget_distance_equivalent_ft": 20,
+      "expected_node_distances_ft": {},
+      "expected_intervals_ft": {
+        "AB": [
+          [
+            30,
+            70
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 40,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F12",
+      "edges": [
+        {
+          "id": "OA",
+          "from": "O",
+          "to": "A",
+          "length_ft": 30,
+          "direction": "both"
+        },
+        {
+          "id": "OB",
+          "from": "O",
+          "to": "B",
+          "length_ft": 30,
+          "direction": "both"
+        },
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "node": "O"
+      },
+      "budget_distance_equivalent_ft": 50,
+      "expected_node_distances_ft": {
+        "O": 0,
+        "A": 30,
+        "B": 30
+      },
+      "expected_intervals_ft": {
+        "OA": [
+          [
+            0,
+            30
+          ]
+        ],
+        "OB": [
+          [
+            0,
+            30
+          ]
+        ],
+        "AB": [
+          [
+            0,
+            20
+          ],
+          [
+            80,
+            100
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 100,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F13",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        },
+        {
+          "id": "BC",
+          "from": "B",
+          "to": "C",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "node": "A"
+      },
+      "budget_distance_equivalent_ft": 100,
+      "expected_node_distances_ft": {
+        "A": 0,
+        "B": 100
+      },
+      "expected_intervals_ft": {
+        "AB": [
+          [
+            0,
+            100
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 100,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F14",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "node": "A"
+      },
+      "budget_distance_equivalent_ft": 0,
+      "expected_node_distances_ft": {
+        "A": 0
+      },
+      "expected_intervals_ft": {},
+      "expected_unique_source_length_ft": 0,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F15",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "forward"
+        }
+      ],
+      "origin": {
+        "segment": "AB",
+        "offset_ft": 50,
+        "access_distance_ft": 0
+      },
+      "budget_distance_equivalent_ft": 20,
+      "expected_node_distances_ft": {},
+      "expected_intervals_ft": {
+        "AB": [
+          [
+            50,
+            70
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 20,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F15-alternative",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "reverse"
+        }
+      ],
+      "origin": {
+        "segment": "AB",
+        "offset_ft": 50,
+        "access_distance_ft": 0
+      },
+      "budget_distance_equivalent_ft": 20,
+      "expected_node_distances_ft": {},
+      "expected_intervals_ft": {
+        "AB": [
+          [
+            30,
+            50
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 20,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F16",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "segment": "AB",
+        "offset_ft": 50,
+        "access_distance_ft": 10
+      },
+      "budget_distance_equivalent_ft": 20,
+      "expected_node_distances_ft": {},
+      "expected_intervals_ft": {
+        "AB": [
+          [
+            40,
+            60
+          ]
+        ]
+      },
+      "expected_unique_source_length_ft": 20,
+      "expected_connector_length_ft": 10,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F17",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "segment": "AB",
+        "offset_ft": 50,
+        "access_distance_ft": 10
+      },
+      "budget_distance_equivalent_ft": 10,
+      "expected_node_distances_ft": {},
+      "expected_intervals_ft": {},
+      "expected_unique_source_length_ft": 0,
+      "expected_network_origin_reached": true,
+      "expected_status": "synthetic_complete"
+    },
+    {
+      "id": "F17-alternative",
+      "edges": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "length_ft": 100,
+          "direction": "both"
+        }
+      ],
+      "origin": {
+        "segment": "AB",
+        "offset_ft": 50,
+        "access_distance_ft": 10
+      },
+      "budget_distance_equivalent_ft": 9,
+      "expected_node_distances_ft": {},
+      "expected_intervals_ft": {},
+      "expected_unique_source_length_ft": 0,
+      "expected_status": "budget_exhausted_before_network",
+      "expected_network_origin_reached": false
+    }
+  ]
+}

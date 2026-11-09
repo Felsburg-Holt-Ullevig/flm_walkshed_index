@@ -1,0 +1,10 @@
+[
+  { "name": "unknown field", "schema": "nodes", "field": "extra", "value": 1 },
+  {
+    "name": "unsupported version",
+    "schema": "nodes",
+    "field": "schema_version",
+    "value": "flm-nodes-999"
+  },
+  { "name": "wrong identifier type", "schema": "nodes", "field": "release_id", "value": 42 }
+]

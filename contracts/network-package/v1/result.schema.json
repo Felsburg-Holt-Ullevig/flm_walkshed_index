@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "flm-reachable-1"
+    },
+    "release_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "graph_id": {
+      "$ref": "common.schema.json#/$defs/sha"
+    },
+    "manifest_sha256": {
+      "$ref": "common.schema.json#/$defs/sha"
+    },
+    "app_version": {
+      "$ref": "common.schema.json#/$defs/text"
+    },
+    "app_commit": {
+      "$ref": "common.schema.json#/$defs/text"
+    },
+    "algorithm_version": {
+      "const": "experimental-reachability-1"
+    },
+    "request": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "$ref": "common.schema.json#/$defs/id"
+        },
+        "origin_mode": {
+          "const": "source_node"
+        },
+        "node_id": {
+          "$ref": "common.schema.json#/$defs/source_id"
+        },
+        "entrance_verification": {
+          "enum": ["synthetic", "not_verified"]
+        },
+        "time_budget_seconds": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 3600
+        },
+        "access_seconds": {
+          "const": 0
+        }
+      },
+      "required": [
+        "request_id",
+        "origin_mode",
+        "node_id",
+        "entrance_verification",
+        "time_budget_seconds",
+        "access_seconds"
+      ],
+      "additionalProperties": false
+    },
+    "computation_status": {
+      "enum": ["synthetic_complete", "incomplete", "no_network", "failed"]
+    },
+    "coverage_readiness": {
+      "enum": ["synthetic_closed", "not_established"]
+    },
+    "policy_readiness": {
+      "enum": ["ready", "blocked"]
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/text"
+      }
+    },
+    "error_code": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/text"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "outputs": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "reached_nodes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "node_id": {
+                    "$ref": "common.schema.json#/$defs/source_id"
+                  },
+                  "seconds": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "required": ["node_id", "seconds"],
+                "additionalProperties": false
+              },
+              "maxItems": 600000
+            },
+            "intervals": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "candidate_id": {
+                    "$ref": "common.schema.json#/$defs/id"
+                  },
+                  "start_ft": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "end_ft": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "required": ["candidate_id", "start_ft", "end_ft"],
+                "additionalProperties": false
+              },
+              "maxItems": 1400000
+            },
+            "unique_source_length_ft": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": ["reached_nodes", "intervals", "unique_source_length_ft"],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "release_id",
+    "graph_id",
+    "manifest_sha256",
+    "app_version",
+    "app_commit",
+    "algorithm_version",
+    "request",
+    "computation_status",
+    "coverage_readiness",
+    "policy_readiness",
+    "blockers",
+    "error_code",
+    "outputs"
+  ],
+  "additionalProperties": false,
+  "$id": "https://schemas.flm.example/network-package/v1/result.schema.json"
+}

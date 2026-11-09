@@ -2,7 +2,9 @@
 
 A web application in development for evaluating first/last mile walking access around transit stops and stations in Colorado.
 
-The intended workflow is to create or upload station locations, generate network walksheds, examine individual metrics and index scores, and export results. This repository currently contains the development foundation and a Hello World placeholder. GIS data, analysis, scoring, session storage, and reporting are future work.
+The intended workflow is to create or upload custom analysis points, generate network walksheds, examine metrics and index scores, and export results. The current prototype includes an offline pedestrian-network pipeline, a validated browser package loader and source-node reachability harness, and local Census/corridor allocation experiments. Scoring, coordinate-origin UI, session storage and final reporting remain future work.
+
+Read the [plain-language prototype overview](docs/prototype-overview.md) for what works and its limits, or the [independent review guide](docs/independent-review.md) to inspect the implementation.
 
 ## Maintainer entry points
 
@@ -13,7 +15,7 @@ The intended workflow is to create or upload station locations, generate network
 - [Validation policy](docs/validation.md): checks and analytical acceptance.
 - [Methodology status](docs/methodology.md): decisions required before calculations are implemented.
 - [Data contract status](docs/data-contract.md): preparation/runtime boundaries and versioning requirements.
-- [Preparation pipeline](pipeline/README.md): where offline data work will live.
+- [Preparation pipeline](pipeline/README.md): offline preparation commands and contracts.
 
 ## Development
 
@@ -21,7 +23,7 @@ Setup, commands, and the review process are in the [developer guide](DEVELOPER.m
 
 ## Development preview
 
-A [development preview](https://felsburg-holt-ullevig.github.io/flm_walkshed_index/) is built from `main`. It is not a CDOT service and has no analytical content yet. CDOT production hosting, methodology, accessibility evidence, data publication, branding, and final distribution requirements remain open.
+A [development preview](https://felsburg-holt-ullevig.github.io/flm_walkshed_index/) is built from `main`. It is a development preview, not a CDOT service or an authoritative analysis product. CDOT production hosting, methodology, accessibility evidence, data publication, branding, and final distribution requirements remain open.
 
 ## Data and distribution
 

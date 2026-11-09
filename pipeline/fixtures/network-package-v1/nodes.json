@@ -1,0 +1,28 @@
+{
+  "schema_version": "flm-nodes-1",
+  "release_id": "synthetic-f01-v1",
+  "graph_id": "886b81210aeb8574a9f0e3afd3c469841f455c071fc7f9becb20e6f4c65599c4",
+  "nodes": [
+    {
+      "node_id": "1",
+      "coordinate": [
+        -105.0,
+        39.75
+      ]
+    },
+    {
+      "node_id": "2",
+      "coordinate": [
+        -104.9997,
+        39.75
+      ]
+    },
+    {
+      "node_id": "3",
+      "coordinate": [
+        -104.9994,
+        39.75
+      ]
+    }
+  ]
+}

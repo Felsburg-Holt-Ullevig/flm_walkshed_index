@@ -1,0 +1,28 @@
+# Regional extractor implementation brief
+
+Status: task 2.2 implementation is complete for synthetic PBF inputs. The `extract` CLI implements [source-network-1](source-network-contract.md), uses an inventory-linked pinned source, and promotes only validated outputs. No real regional extraction has run because source hashes remain unpinned and source acceptance is pending. GeoPackage export follows in task 2.3.
+
+The existing `prototype-config-1` format remains unchanged. The `extract` command takes the accepted `source-inventory.json` and its `run-report.json` as required CLI paths, and verifies their file hash, config hash, source record, full OSM counts, and current code identity before processing.
+
+## Preconditions
+
+Gate 1 is accepted for contract development only. Before real extraction, the developer must accept source identities/provenance limitations and pin hashes, and an unedited full inventory must be regenerated from the code used for that inventory. Preserve the edited discovery artifact. End-to-end pinned-hash rejection and supervisor timeout, RSS-limit and child-cleanup coverage are implemented in synthetic tests. Do not fill example hashes automatically or bypass failed prerequisites. Census/catalog inputs do not participate in network selection; record the network source and inventory identity explicitly.
+
+## Implementation sequence
+
+1. Add an `extract --config <path>` CLI stage using existing validated configuration and supervised-worker/report machinery. Extend validation deliberately if an accepted-inventory path is needed; reject unknown fields and missing/unpinned/mismatched network hashes. Specify the exact revised configuration version and tests before accepting a new field. Reuse current bounds, CRS and limits without changing defaults.
+2. Hash and verify the PBF before processing. Record source size/hash and inventory linkage; detect source changes during processing by rehashing before success. Use unique ignored run/staging directories and raw inputs read-only. Do not reuse output based only on filenames/mtimes.
+3. Use PyOsmium passes and disk-backed SQLite storage/indexes for node IDs, coordinates, tags, way references and relation records. Copy reader-owned data immediately. Avoid a statewide Python node dictionary. Count the complete streams and reconcile with the accepted same-hash inventory. Reject duplicate entity identities rather than overwriting SQLite rows.
+4. First scan nodes for inside IDs and tagged inside records; validate coordinate ranges. Scan ways to select highway ways with an inside reference and persist their ordered references/tags. Resolve required nodes with a further node pass or disk index, including outside vertices. Validate required-reference completeness before geometry generation. Selection uses references, not line intersection or pedestrian filtering.
+5. Scan relations once nodes/ways are finalized; select direct members as specified, preserving all member records. Determine each member's `resolved` value after the complete selected relation ID set is known. Do not recurse or pull additional ways into the network.
+6. Write the three canonical JSONL files and extraction metadata specified by the contract. Validate by reopening; calculate hashes/counts and preserve useful failed-run diagnostics. Use bounded fetch/write batches. Report per-pass timing and total duration, sampled process-tree RSS, measurement interval and configured cap. All processing stays under the existing supervisor; supervisor failure overrides any worker success JSON.
+7. Promote only after all validations and worker exit succeed. Keep candidate files in staging until then. A single same-volume directory rename may publish the validated candidate into its unique generated destination; do not overwrite an existing destination. The parent writes success only after verifying the candidate and promotion. Interrupted/failed runs remain marked failed and cannot be mistaken for accepted output.
+8. Run synthetic cases through the real extractor entry point, then the pinned regional input. Repeat identical input/config/code into a new run and compare canonical entity semantic hashes, counts and diagnostics. Record any file-container differences separately. Do not claim a fresh run if reusing artifacts.
+
+## Required checks and handoff
+
+The focused suite uses tiny synthetic PBF inputs and the real reader/CLI for complete-way selection, relation retention, tag/ID fidelity, missing references, duplicate entity IDs, malformed input, unpinned/mismatched hashes, empty selection, deterministic output and promotion failure. It also checks invalid-coordinate diagnostics and supervisor timeout/RSS/child cleanup. Fixtures contain no external source data. A full fixture-for-fixture implementation of [the documented matrix](fixtures/source-network-cases.md) remains suitable follow-up coverage.
+
+Task 2.2 produces canonical subset/report/tests; it does not interpret tags, construct a routing graph, or export the task 2.3 GeoPackage. Task 2.3 derives consecutive segments and inspection layers from canonical records and verifies GIS round trips. Task 2.4 reviews real GIS observations. Any need for relation-derived access, repairs or a different inclusion rule returns for review rather than silently changing this specification.
+
+Closeout must list exact commands and pass/fail/not-run results, source/config/code identities, output paths/hashes/counts, performance measurements and limitations, failure-test evidence, and the next entry point. Python CI, browser-loader compatibility, complete-route validation and public licensing clearance remain separate requirements.
