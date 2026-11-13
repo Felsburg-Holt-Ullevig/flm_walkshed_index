@@ -69,5 +69,7 @@ start with the full walking budget; flag and reject points without an eligible
 candidate. Successful snaps require no user-facing flag. Verified station
 entrances are not a general prerequisite. Exactly equal distances prefer the northernmost candidate, measured at its
 closest snap point; a remaining latitude tie uses stable source candidate ID
-ordering. Numerical measurement details remain to be specified before implementation. This limited
+ordering. [Decision 0012](decisions/0012-plan-a-reference-tests.md) records the approved
+geodesic numerical method, six locations, and exact 2.8-mph speed for offline
+Plan A testing. This limited
 product decision does not approve the remaining FLM methodology.

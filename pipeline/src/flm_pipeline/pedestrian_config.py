@@ -62,6 +62,10 @@ _EXPECTED = {
 }
 _SPEED_MPH = 4500 / 1609.344
 _METERS_PER_FOOT = 0.3048
+_SCENARIO_SPEEDS = {
+    "public-walk-experiment-0.3": _SPEED_MPH,
+    "plan-a-walk-reference-2.8-v1": 2.8,
+}
 
 
 def _expect_table(raw: Any, key: str, expected: set[str]) -> dict[str, Any]:
@@ -104,7 +108,7 @@ def load_pedestrian_settings(path: str | Path) -> PedestrianSettings:
             details.append(f"missing fields: {', '.join(missing)}")
         raise PedestrianConfigError(f"configuration: {'; '.join(details)}")
     for key, expected in _EXPECTED.items():
-        if key in {"feet_per_mile", "length_unit", "time_unit", "crossing_delay_model", "steps_cost_model", "slope_cost_model"}:
+        if key in {"scenario_id", "feet_per_mile", "length_unit", "time_unit", "crossing_delay_model", "steps_cost_model", "slope_cost_model"}:
             continue
         if key in {"origin_mode", "access_connectors", "snap_distance_ft", "unknown_candidates", "unknown_node", "blocked_node"}:
             continue
@@ -145,8 +149,21 @@ def load_pedestrian_settings(path: str | Path) -> PedestrianSettings:
         if actual != expected:
             raise PedestrianConfigError(f"completeness.{key} must be {expected!r}")
     speed = cost["speed_mph"]
-    if isinstance(speed, bool) or not isinstance(speed, (int, float)) or not math.isfinite(float(speed)) or not math.isclose(float(speed), _SPEED_MPH, rel_tol=0, abs_tol=1e-15):
-        raise PedestrianConfigError("cost.speed_mph must preserve the exact accepted 1.25 m/s conversion")
+    scenario_id = raw.get("scenario_id")
+    if not isinstance(scenario_id, str):
+        raise PedestrianConfigError("scenario_id must be text")
+    expected_speed = _SCENARIO_SPEEDS.get(scenario_id)
+    if expected_speed is None:
+        raise PedestrianConfigError(f"scenario_id must be one of {', '.join(sorted(_SCENARIO_SPEEDS))}")
+    if isinstance(speed, bool) or not isinstance(speed, (int, float)) or not math.isfinite(float(speed)):
+        raise PedestrianConfigError(f"cost.speed_mph must equal {expected_speed!r} for scenario {scenario_id!r}")
+    matched_speed = (
+        math.isclose(float(speed), _SPEED_MPH, rel_tol=0, abs_tol=1e-15)
+        if scenario_id == "public-walk-experiment-0.3"
+        else float(speed) == 2.8
+    )
+    if not matched_speed:
+        raise PedestrianConfigError(f"cost.speed_mph must equal {expected_speed!r} for scenario {scenario_id!r}")
     meters_per_foot = cost["meters_per_international_foot"]
     if isinstance(meters_per_foot, bool) or not isinstance(meters_per_foot, (int, float)) or float(meters_per_foot) != _METERS_PER_FOOT:
         raise PedestrianConfigError("cost.meters_per_international_foot must equal 0.3048")

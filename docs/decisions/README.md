@@ -42,3 +42,6 @@ The concrete condition that would reopen the decision.
 | 0010 | [General pedestrian walkshed and kerb policy](0010-general-pedestrian-walkshed-and-kerb-policy.md) | Accepted for experimental scope | 2026-11-03 |
 
 | 0011 | [User-defined origins and initial snapping rules](0011-user-defined-origins-and-snapping.md) | Accepted initial product rules; implementation pending | 2026-11-09 |
+| 0012 | [Plan A offline reference tests](0012-plan-a-reference-tests.md) | Accepted for experimental testing | 2026-11-11 |
+
+| 0013 | [Census indicator definitions and deferred methods](0013-census-indicator-definitions-and-deferred-methods.md) | Accepted definitions; implementation pending | 2026-11-12 |

@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.flm.example/walk-tiles/v0/manifest.schema.json",
+  "$defs": {
+    "tile": {
+      "type": "object",
+      "properties": {
+        "col": { "type": "integer", "minimum": 0, "maximum": 35999 },
+        "row": { "type": "integer", "minimum": 0, "maximum": 17999 },
+        "path": { "type": "string", "pattern": "^network/(0|[1-9][0-9]*)_(0|[1-9][0-9]*)\\.json$" },
+        "segments": { "type": "integer", "minimum": 1 },
+        "bytes": { "type": "integer", "minimum": 1 }
+      },
+      "required": ["col", "row", "path", "segments", "bytes"],
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "properties": {
+    "format": { "const": "walk-tiles" },
+    "version": { "const": 0 },
+    "release_id": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" },
+    "source_release_id": { "type": "string", "minLength": 1 },
+    "grid": {
+      "type": "object",
+      "properties": {
+        "cell_size_degrees": { "const": 0.01 },
+        "origin": { "const": [-180, -90] },
+        "coordinate_scale": { "const": 10000000 },
+        "cell_size_scaled": { "const": 100000 },
+        "coordinate_rounding": { "const": "none; exact decimal input, maximum seven places" },
+        "segment_membership": { "const": "closed cells; whole segment in every touched cell" },
+        "point_index": {
+          "const": "floor((lon+180)/0.01), floor((lat+90)/0.01) using exact decimal arithmetic"
+        }
+      },
+      "required": [
+        "cell_size_degrees",
+        "origin",
+        "coordinate_scale",
+        "cell_size_scaled",
+        "coordinate_rounding",
+        "segment_membership",
+        "point_index"
+      ],
+      "additionalProperties": false
+    },
+    "crs": { "const": "EPSG:4326" },
+    "coordinate_order": { "const": "longitude_latitude" },
+    "length_unit": { "const": "international_foot" },
+    "default_speed_mph": { "const": 2.8 },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "bbox": {
+          "type": "array",
+          "prefixItems": [
+            { "type": "number", "minimum": -180, "maximum": 180 },
+            { "type": "number", "minimum": -90, "maximum": 90 },
+            { "type": "number", "minimum": -180, "maximum": 180 },
+            { "type": "number", "minimum": -90, "maximum": 90 }
+          ],
+          "items": false
+        },
+        "readiness": { "const": "not_established" },
+        "meaning": {
+          "const": "extent of included source geometry, not a guarantee of complete walkable streets"
+        }
+      },
+      "required": ["bbox", "readiness", "meaning"],
+      "additionalProperties": false
+    },
+    "tiles": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/tile" } },
+    "source": {
+      "type": "object",
+      "properties": {
+        "osm_data_timestamp": { "const": "2026-11-01T21:21:36Z" },
+        "download_date": { "const": "2026-11-02" },
+        "walking_rule_version": { "const": "pedestrian-policy-0.3" },
+        "selection": {
+          "enum": [
+            "existing included segments; no re-extraction or reclassification",
+            "highway-node-in-bbox-complete-way-1; pedestrian-policy-0.3 included segments"
+          ]
+        }
+      },
+      "required": ["osm_data_timestamp", "download_date", "walking_rule_version", "selection"],
+      "additionalProperties": false
+    },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "included": { "type": "integer", "minimum": 1 },
+        "excluded": { "type": "integer", "minimum": 0 },
+        "unknown_left_out": { "type": "integer", "minimum": 0 },
+        "nodes": { "type": "integer", "minimum": 1 },
+        "directed_arcs": { "type": "integer", "minimum": 1 },
+        "tiles": { "type": "integer", "minimum": 1 },
+        "segment_copies": { "type": "integer", "minimum": 1 },
+        "total_length_ft": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "required": [
+        "included",
+        "excluded",
+        "unknown_left_out",
+        "nodes",
+        "directed_arcs",
+        "tiles",
+        "segment_copies",
+        "total_length_ft"
+      ],
+      "additionalProperties": false
+    },
+    "attribution": { "const": "© OpenStreetMap contributors" },
+    "license": { "const": "ODbL-1.0" },
+    "license_url": { "const": "https://opendatacommons.org/licenses/odbl/1-0/" },
+    "attribution_url": { "const": "https://www.openstreetmap.org/copyright" },
+    "distribution_status": { "const": "local_experimental_not_cleared_for_redistribution" },
+    "limitations": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+  },
+  "required": [
+    "format",
+    "version",
+    "release_id",
+    "source_release_id",
+    "grid",
+    "crs",
+    "coordinate_order",
+    "length_unit",
+    "default_speed_mph",
+    "coverage",
+    "tiles",
+    "source",
+    "counts",
+    "attribution",
+    "license",
+    "license_url",
+    "attribution_url",
+    "distribution_status",
+    "limitations"
+  ],
+  "additionalProperties": false
+}
