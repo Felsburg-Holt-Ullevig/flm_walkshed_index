@@ -1,6 +1,6 @@
 # Architecture overview
 
-Updated: November 9, 2026. Status: browser foundation plus offline source inspection, synthetic-verified extraction/GeoPackage export, supervised synthetic KMZ review packages, experimental pedestrian classification and graph assembly, browser package loading/reachability, and synthetic-verified Census ingestion wiring. Gate 2 is accepted for its documented prototype scope. Pedestrian policy 0.3 now incorporates the accepted kerb refinement for a general pedestrian walkshed; prior 0.2 evidence is historical. Task 5.1's package contract, fixture and provisional limits are accepted; Task 5.2 builds validated ignored local releases. Task 5.3 computes source-node reachability in a browser worker; Gate 5A is accepted for the synthetic local workflow. Task 5.5 completed authenticated local Census ingestion after method/source acceptance: 576 block groups joined with zero mismatches, and both vintage-specific GeoPackages reopened successfully. Population is available; all requested household/no-vehicle fields were null and remain unavailable. Regional analytical promotion remains pending.
+Updated: November 12, 2026. Status: browser foundation plus offline source inspection, synthetic-verified extraction/GeoPackage export, supervised synthetic KMZ review packages, experimental pedestrian classification and graph assembly, browser package loading/reachability, and synthetic-verified Census ingestion wiring. Gate 2 is accepted for its documented prototype scope. Pedestrian policy 0.3 now incorporates the accepted kerb refinement for a general pedestrian walkshed; prior 0.2 evidence is historical. Task 5.1's package contract, fixture and provisional limits are accepted; Task 5.2 builds validated ignored local releases. Task 5.3 computes source-node reachability in a browser worker; Gate 5A is accepted for the synthetic local workflow. Task 5.5 completed authenticated local Census ingestion after method/source acceptance: 576 block groups joined with zero mismatches, and both vintage-specific GeoPackages reopened successfully. Population is available; all requested household/no-vehicle fields were null and remain unavailable. Regional analytical promotion remains pending.
 
 ## Implemented structure
 
@@ -12,8 +12,9 @@ index.html -> src/main.tsx -> src/ui/App.tsx
 
 src/domain/                  pure source-node shortest paths, source interval union, allocation totals and paired rates
 src/adapters/                bounded package loading, shared schema validation, identity checks and worker coordination
-pipeline/src/flm_pipeline/   source inspection, GIS smoke, source inventory, extraction/export, KMZ inspection, pedestrian classification/audit, and directed graph assembly
+pipeline/src/flm_pipeline/   source inspection, GIS smoke, source inventory, extraction/export, KMZ inspection, pedestrian classification/audit, directed graph assembly, and fixed-grid walk-tile export/verification
 pipeline/tools/package_network.py   offline schema/content/GIS validation, synthetic package generation, and supervised local frozen-graph packaging
+pipeline/tools/build_walk_tiles.py  offline fixed-grid tile build from the accepted Denver package, with independent reopened-output checks
 pipeline/tests/              Python config/runtime/GIS/inventory/extraction/export/supervisor/pedestrian-policy/graph tests
 data/                        small-fixture/catalog policy documented; datasets pending
 ```
@@ -49,6 +50,22 @@ Authoritative walking costs, aggregation, normalization, and scoring belong in p
 Add an application coordination layer and worker directory when the first analysis job requires them. Jobs will need identifiable inputs/versions, progress, cancellation, stale/failed states, and protection from an older result overwriting a newer request. This behavior is not implemented in the foundation.
 
 Data preparation should remain an offline workflow. The current pipeline inspects sources and extracts a regional source subset; routing connectivity, display tiles, and analytical indicator data remain separate products connected through a future versioned manifest. Large inputs/archives belong in approved external storage; only small cleared fixtures and metadata belong in normal Git.
+
+The experimental walk-tile adapter writes closed-cell 0.01-degree network tiles from the existing accepted Denver package. It preserves whole source segments and joins by source node IDs, validates JSON Schemas, verifies complete tile membership and directed connectivity, and reports plain/gzip size measurements. Its manifest declares lengths in international feet and an exact default speed of 2.8 mph (`default_speed_mph`), with coverage unestablished and redistribution uncleared. Coordinates remain longitude/latitude in degrees. This separate data format has no reader integration; see [pipeline/walk-tiles.md](pipeline/walk-tiles.md). The [version 0 reader guide](contracts/walk-tiles/v0/README.md) specifies fields, boundary handling and graph reconstruction with a saved-data worked example.
+
+Plan A's offline reference adapter adds coordinate snapping and distance-budget
+traversal for the six testing locations in [decision 0012](docs/decisions/0012-plan-a-reference-tests.md).
+`walk_reference.py` uses a foot-scaled WGS84 ellipsoid, global candidate lower
+bounds, and a bounded convex-geodesic closest-position solver. Unresolved
+thresholds, ties, and numerical positions fail explicitly. `walk_samples.py` and
+`prepare_walk_samples.py` prepare separate bounded samples from the accepted local
+OSM source. The named `plan-a-walk-reference-2.8-v1` cost setting uses exactly
+2.8 mph while retaining policy 0.3 eligibility and historical settings.
+`walk_reference_output.py` reconstructs disk tiles against source records and
+writes reference JSON plus a reopened GeoPackage. This is an independent offline
+comparison product; it adds no application routing engine, polygons, or Census
+processing. See [reference usage](pipeline/walk-reference.md). Generated outputs
+remain local experimental data with coverage unestablished. Separate source/size and independent validation tools check whole source pairs, imperial costs, serialized sizes, saved traversal results, and reopened GIS records. Viewing-application import and human visual review remain separate checks.
 
 ## Runtime analysis options
 
@@ -102,3 +119,7 @@ accepts exactly Windows x86-64 CPython 3.12.10 or 3.12.14. Existing CPython 3.12
 wheel versions and SHA-256 locks remain unchanged; CI verifies their installation
 and synthetic behavior on 3.12.10. Historical local results retain their recorded
 3.12.14 environment identity. Other patch versions remain unsupported by doctor.
+
+## Accepted Census definitions
+
+[Decision 0013](docs/decisions/0013-census-indicator-definitions-and-deferred-methods.md) records the accepted initial Census indicator definitions and source geographies. Density remains contextual; spatial allocation, derived uncertainty, mixed-geography station aggregation and scoring methods remain deferred. These specifications do not change the historical ingestion allowlist or implemented data flow.

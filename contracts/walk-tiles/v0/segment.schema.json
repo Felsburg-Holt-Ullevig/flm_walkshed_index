@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.flm.example/walk-tiles/v0/segment.schema.json",
+  "$defs": {
+    "segment": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "len_ft": { "type": "number", "exclusiveMinimum": 0 },
+        "dir": { "enum": ["both", "forward", "reverse"] },
+        "coords": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              { "type": "number", "minimum": -180, "maximum": 180 },
+              { "type": "number", "minimum": -90, "maximum": 90 }
+            ],
+            "items": false
+          }
+        },
+        "way_id": { "type": "string", "minLength": 1 },
+        "hwy": { "type": "string", "minLength": 1 },
+        "name": { "type": "string" },
+        "sidewalk": { "type": "string" },
+        "footway": { "type": "string" }
+      },
+      "required": [
+        "id",
+        "from",
+        "to",
+        "len_ft",
+        "dir",
+        "coords",
+        "way_id",
+        "hwy",
+        "name",
+        "sidewalk",
+        "footway"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
