@@ -51,6 +51,9 @@ exported edges. These tags become part of the merge comparison, so a change
 in a tag value, including a missing value, keeps the neighboring edges
 separate. The resulting GeoPackage still has only the edges and nodes layers.
 The build report lists the exported fields and their original OSM keys.
+Tag export requires only the matching `--osm-extraction`. To enable
+vehicle-access pruning too, also provide `--osm-classification` and
+`--boundary-bbox`.
 
 ## Rebuild the tagged GeoPackage
 

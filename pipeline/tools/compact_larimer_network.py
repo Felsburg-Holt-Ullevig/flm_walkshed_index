@@ -18,7 +18,7 @@ def main() -> None:
     parser.add_argument("--inclusive", type=Path, required=True, help="verified inclusive GeoPackage")
     parser.add_argument("--destination", type=Path, required=True)
     parser.add_argument("--boundary-bbox", type=float, nargs=4, metavar=("MIN_LON", "MIN_LAT", "MAX_LON", "MAX_LAT"), help="explicit export boundary; omission preserves all prune candidates")
-    parser.add_argument("--osm-extraction", type=Path, help="matching OSM extraction directory for vehicle-access pruning")
+    parser.add_argument("--osm-extraction", type=Path, help="matching OSM extraction directory for retaining tags or vehicle-access pruning")
     parser.add_argument("--osm-classification", type=Path, help="matching OSM classification directory for vehicle-access pruning")
     parser.add_argument("--retain-osm-tags", action="store_true", help="export walking-relevant OSM fields and only merge lines with matching values")
     args = parser.parse_args()

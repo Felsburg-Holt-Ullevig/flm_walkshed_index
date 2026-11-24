@@ -368,7 +368,7 @@ def compact_network(
         raise FileExistsError(destination)
     if retain_osm_tags and osm_extraction is None:
         raise ValueError("Retaining original OSM tags requires the matching OSM extraction")
-    if (osm_extraction is not None or osm_classification is not None) and (
+    if (osm_classification is not None or (osm_extraction is not None and not retain_osm_tags)) and (
         osm_extraction is None or osm_classification is None or boundary_bbox is None
     ):
         raise ValueError("Vehicle-access pruning requires the OSM extraction, classification, and boundary")

@@ -58,6 +58,19 @@ def audit_records(path: Path) -> dict[str, dict]:
     return result
 
 
+def check_saved_endpoints(candidate: Path, new_edges) -> None:
+    connection = sqlite3.connect(candidate.resolve().as_uri() + "?mode=ro", uri=True)
+    try:
+        saved = {node_id for (node_id,) in connection.execute("SELECT node_id FROM pedestrian_nodes") if node_id is not None}
+    finally:
+        connection.close()
+    for edge in new_edges:
+        for field in ("from_node_id", "to_node_id"):
+            node_id = edge.get(field)
+            if node_id not in saved:
+                raise ValueError(f"New segment {edge['segment_id']} has missing saved endpoint {field}={node_id!r} in pedestrian_nodes")
+
+
 def compare(baseline: Path, candidate: Path, baseline_audit: Path, candidate_audit: Path, output_csv: Path, output_json: Path) -> None:
     baseline_hash_before = digest(baseline)
     if baseline_hash_before != BASELINE_SHA256:
@@ -70,6 +83,9 @@ def compare(baseline: Path, candidate: Path, baseline_audit: Path, candidate_aud
     added_ids = sorted(set(candidate_rows) - set(baseline_rows))
     removed_ids = sorted(set(baseline_rows) - set(candidate_rows))
     retained_ids = sorted(set(baseline_rows) & set(candidate_rows))
+    if not retained_ids:
+        raise ValueError("Baseline and inclusive GeoPackages share no segment IDs")
+    check_saved_endpoints(candidate, (candidate_rows[key] for key in added_ids))
     compare_fields = [key for key in baseline_rows[retained_ids[0]] if key != "geom"]
     unchanged_attributes = all(
         all(baseline_rows[key][field] == candidate_rows[key][field] for field in compare_fields)
@@ -148,7 +164,10 @@ def main() -> None:
     parser.add_argument("--csv", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
     args = parser.parse_args()
-    compare(args.baseline, args.inclusive, args.baseline_audit, args.inclusive_audit, args.csv, args.report)
+    try:
+        compare(args.baseline, args.inclusive, args.baseline_audit, args.inclusive_audit, args.csv, args.report)
+    except (ValueError, sqlite3.Error) as error:
+        parser.exit(1, f"Larimer comparison failed: {error}\n")
     print(json.dumps({"status": "pass", "csv": str(args.csv), "report": str(args.report)}, indent=2))
 
 

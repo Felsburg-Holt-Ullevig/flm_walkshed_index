@@ -137,16 +137,9 @@ def test_exported_tags_prevent_merging_different_way_values(tmp_path):
         ), start=1)
     ]
     (tmp_path / "ways.jsonl").write_text("\n".join(map(json.dumps, ways)), encoding="utf-8")
-    (tmp_path / "nodes.jsonl").write_text("", encoding="utf-8")
-    (tmp_path / "ways-classified.jsonl").write_text("\n".join(
-        json.dumps({"evaluation": {"osm_id": way["osm_id"], "eligibility": "include", "reason_codes": []}})
-        for way in ways
-    ), encoding="utf-8")
     output = tmp_path / "tagged"
-    compact_network(
-        source, output, boundary_bbox=(-105.1, 39.9, -104.9, 40.1),
-        osm_extraction=tmp_path, osm_classification=tmp_path, retain_osm_tags=True,
-    )
+    compact_network(source, output, osm_extraction=tmp_path, retain_osm_tags=True)
     edges = read_dataframe(output / COMPACT_FILENAME, layer="pedestrian_edges").set_index("segment_id")
     assert edges.loc["e1", "foot"] == "yes"
     assert isna(edges.loc["e2", "foot"])
+    assert edges.loc["e4", "service"] == "driveway"
