@@ -37,6 +37,13 @@ The `export` command requires the matching configuration and a successful extrac
 
 The shared discovery example has no pinned hashes; the accepted regional hash remains in ignored local run configuration. Do not copy it into shared configuration without separate source and publication review. Census and catalog inputs do not select network records. Extraction output is an offline source subset; export creates GIS inspection layers only and does not interpret pedestrian access or build a graph.
 
+## Larimer walking-network GeoPackage
+
+The [Larimer build guide](larimer-compact.md) covers the inclusive walking
+profile, GIS export, driveway and vehicle-access pruning, and tagged compact
+output. Use this guide to resume local Larimer GIS work. The county profile
+is an experiment alongside the default policy 0.3.
+
 ## Experimental regional routing diagnostic
 
 Task 4.4 adds the local `pipeline/tools/run_regional_routing.py` command. Its ignored handoff and closeout are under `docs/planning/2026-11-02/`; the output contains a GeoPackage, a JSON run report, and common-core difference tables. To prepare an expanded extract and graph, then compare it with the accepted original graph, use the two commands below with the run IDs recorded in the active handoff:
@@ -67,7 +74,7 @@ The accepted local OSM snapshot has completed a fresh inventory, regional extrac
 
 ## Accepted experimental pedestrian policy and audit
 
-[Policy 0.2](pedestrian-policy.md) specifies experimental access, direction, barriers, sidewalk evidence and base travel costs. The `classify` command consumes the [accepted example configuration](config/pedestrian-policy.example.toml), verifies the completed canonical extraction hashes, and writes way, referenced-node, source-segment-candidate, and conditional-tag JSONL layers. It also writes reconciled JSON and CSV counts by highway, reason, and sidewalk evidence. Outputs go to a unique directory under `data/generated/prototype/pedestrian-classification/`; temporary processing uses `data/staging/prototype/`. Unknown candidates block analytical promotion. Geometry checks, graph assembly, and relation interpretation remain for later tasks.
+[Historical policy 0.2](pedestrian-policy-0.2.md) specifies experimental access, direction, barriers, sidewalk evidence and base travel costs. The `classify` command consumes the [accepted example configuration](config/pedestrian-policy.example.toml), verifies the completed canonical extraction hashes, and writes way, referenced-node, source-segment-candidate, and conditional-tag JSONL layers. It also writes reconciled JSON and CSV counts by highway, reason, and sidewalk evidence. Outputs go to a unique directory under `data/generated/prototype/pedestrian-classification/`; temporary processing uses `data/staging/prototype/`. Unknown candidates block analytical promotion. Geometry checks, graph assembly, and relation interpretation remain for later tasks.
 
 Example:
 

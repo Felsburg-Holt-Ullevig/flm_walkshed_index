@@ -12,6 +12,7 @@ from test_classification import _fixture_extraction, _write_source_file
 
 ROOT = Path(__file__).resolve().parents[2]
 POLICY = ROOT / "pipeline/config/pedestrian-policy.example.toml"
+INCLUSIVE_POLICY = ROOT / "pipeline/config/larimer-inclusive-road-pilot.toml"
 SPEED = 4500 / 1609.344
 
 
@@ -23,7 +24,7 @@ def write_rows(path, rows):
     path.write_bytes(b"".join(_json_bytes(row) + b"\n" for row in rows))
 
 
-def source_fixture(tmp_path, *, empty=False, restriction=False, isolated=False, large_id=False, kerb=False):
+def source_fixture(tmp_path, *, empty=False, restriction=False, isolated=False, large_id=False, kerb=False, policy=POLICY, inclusive=False):
     extraction = _fixture_extraction(tmp_path)
     xy = [(0, 0), (.001, 0), (.002, 0), (.001, 0), (.001, -.001), (.001, .001), (.003, 0), (.004, 0), (.005, 0), (.002, 0)]
     nodes = [{"osm_id": str(i), "lon": lon, "lat": lat, "tags": {}} for i, (lon, lat) in enumerate(xy, 1)]
@@ -44,7 +45,9 @@ def source_fixture(tmp_path, *, empty=False, restriction=False, isolated=False, 
         ("18", ["1", "1"], {}),
         ("19", ["5", "9"], {"foot": "no"}),
     ]
-    ways = [{"osm_id": way, "node_refs": refs, "tags": {"highway": "residential", **tags}} for way, refs, tags in specs]
+    if inclusive:
+        specs.append(("20", ["2", "3"], {"highway": "trunk"}))
+    ways = [{"osm_id": way, "node_refs": refs, "tags": ({"highway": "residential", **tags} if "highway" not in tags else tags)} for way, refs, tags in specs]
     if isolated:
         ways = [way for way in ways if way["osm_id"] != "14"]
     if large_id:
@@ -63,9 +66,20 @@ def source_fixture(tmp_path, *, empty=False, restriction=False, isolated=False, 
     report["output_hashes"] = {name: item["sha256"] for name, item in metadata["files"].items()}
     report["output_hashes"]["extraction.json"] = _hash_file(extraction / "extraction.json")
     _write_json(extraction / "run-report.json", report)
-    code, result = run_classification(extraction, POLICY, tmp_path / "classified", staging_root=tmp_path / "stage")
+    code, result = run_classification(extraction, policy, tmp_path / "classified", staging_root=tmp_path / "stage")
     assert code == 0, result
     return extraction, ROOT / result["run_report"].rsplit("/", 1)[0]
+
+
+def test_inclusive_policy_replays_through_classification_and_graph(tmp_path):
+    extraction, classification = source_fixture(tmp_path, policy=INCLUSIVE_POLICY, inclusive=True)
+    stage = tmp_path / "graph"
+    report = build_graph(extraction, classification, INCLUSIVE_POLICY, stage)
+    trunk = next(row for row in read_rows(stage / "segments.jsonl") if row["way_id"] == "20")
+    assert trunk["eligibility"] == "include"
+    assert "H_TRUNK_ASSUMED_WALKABLE" in trunk["reason_codes"]
+    assert trunk["rule_version"] == "pedestrian-policy-larimer-inclusive-1"
+    assert report["counts"]["candidates_by_eligibility"]["include"] == 8
 
 
 @pytest.fixture

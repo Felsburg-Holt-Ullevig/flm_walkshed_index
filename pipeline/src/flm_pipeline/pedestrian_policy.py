@@ -12,6 +12,12 @@ from typing import Any, Mapping, Sequence
 
 RULE_VERSION = "pedestrian-policy-0.3"
 SCENARIO_ID = "public-walk-experiment-0.3"
+LARIMER_INCLUSIVE_RULE_VERSION = "pedestrian-policy-larimer-inclusive-1"
+LARIMER_INCLUSIVE_SCENARIO_ID = "larimer-inclusive-road-pilot-v1"
+_PROFILES = {
+    "baseline": (RULE_VERSION, SCENARIO_ID),
+    "larimer-inclusive": (LARIMER_INCLUSIVE_RULE_VERSION, LARIMER_INCLUSIVE_SCENARIO_ID),
+}
 
 INCLUDED_HIGHWAYS = frozenset({
     "footway", "pedestrian", "path", "steps", "living_street", "residential", "service",
@@ -180,7 +186,13 @@ def _geometry_role(highway: str | None, tags: Mapping[str, str]) -> str:
     return "other"
 
 
-def evaluate_way(osm_id: str, node_refs: Sequence[str], tags: Mapping[str, str]) -> WayEvaluation:
+def evaluate_way(
+    osm_id: str,
+    node_refs: Sequence[str],
+    tags: Mapping[str, str],
+    *,
+    policy_profile: str = "baseline",
+) -> WayEvaluation:
     """Evaluate one canonical way without geometry or side effects."""
     way_id = _validate_id(osm_id, "way osm_id")
     if not isinstance(node_refs, Sequence) or isinstance(node_refs, (str, bytes)):
@@ -190,6 +202,10 @@ def evaluate_way(osm_id: str, node_refs: Sequence[str], tags: Mapping[str, str])
     for item in node_refs:
         _validate_id(item, "way node reference")
     raw_tags = _validate_tags(tags, "way tags")
+    try:
+        rule_version, scenario_id = _PROFILES[policy_profile]
+    except KeyError as error:
+        raise PolicyInputError(f"unsupported pedestrian policy profile: {policy_profile!r}") from error
 
     reasons: list[str] = []
     warnings: list[str] = []
@@ -216,6 +232,13 @@ def evaluate_way(osm_id: str, node_refs: Sequence[str], tags: Mapping[str, str])
 
     # Stage 3: record class defaults when no supported explicit access decision exists.
     highway_disposition = "unknown"
+    forced_exclusion = False
+    if policy_profile == "larimer-inclusive" and raw_tags.get("highway") in {"motorway", "motorway_link"}:
+        forced_exclusion = True
+        reasons.append("H_LIMITED_ACCESS")
+    if policy_profile == "larimer-inclusive" and raw_tags.get("motorroad") == "yes":
+        forced_exclusion = True
+        reasons.append("H_MOTORROAD_EXCLUDE")
     if lifecycle_excluded:
         highway_disposition = "exclude"
     elif access.disposition == "permit":
@@ -225,6 +248,9 @@ def evaluate_way(osm_id: str, node_refs: Sequence[str], tags: Mapping[str, str])
         if highway in INCLUDED_HIGHWAYS:
             highway_disposition = "include"
             reasons.append("H_DEFAULT_INCLUDE")
+        elif policy_profile == "larimer-inclusive" and highway == "trunk":
+            highway_disposition = "include"
+            reasons.append("H_TRUNK_ASSUMED_WALKABLE")
         elif highway in LIMITED_HIGHWAYS:
             highway_disposition = "exclude"
             reasons.append("H_LIMITED_ACCESS")
@@ -262,7 +288,7 @@ def evaluate_way(osm_id: str, node_refs: Sequence[str], tags: Mapping[str, str])
     if "oneway" in raw_tags or ("junction" in raw_tags and raw_tags.get("junction") == "roundabout"):
         warnings.append("W_VEHICLE_ONEWAY_IGNORED")
 
-    if access.disposition == "prohibit" or highway_disposition == "exclude" or lifecycle_excluded:
+    if forced_exclusion or access.disposition == "prohibit" or highway_disposition == "exclude" or lifecycle_excluded:
         eligibility = "exclude"
         direction = "none"
     elif unsupported_structure or access.disposition == "unknown" or highway_disposition == "unknown" or conditional_keys or variant_keys or proposed_direction == "unknown":
@@ -283,17 +309,21 @@ def evaluate_way(osm_id: str, node_refs: Sequence[str], tags: Mapping[str, str])
         warnings.append("W_SIDEWALK_CONFLICT")
 
     return WayEvaluation(
-        RULE_VERSION, SCENARIO_ID, "way", way_id, eligibility, direction, proposed_direction,
+        rule_version, scenario_id, "way", way_id, eligibility, direction, proposed_direction,
         tuple(dict.fromkeys(reasons)), tuple(dict.fromkeys(warnings)), geometry_role,
         sidewalk_general, sidewalk_left, sidewalk_right, sidewalk_both,
         tuple(sorted(set(conditional_keys) | set(variant_keys))),
     )
 
 
-def evaluate_node(osm_id: str, tags: Mapping[str, str]) -> NodeEvaluation:
+def evaluate_node(osm_id: str, tags: Mapping[str, str], *, policy_profile: str = "baseline") -> NodeEvaluation:
     """Evaluate one referenced source node's access and barrier evidence."""
     node_id = _validate_id(osm_id, "node osm_id")
     raw_tags = _validate_tags(tags, "node tags")
+    try:
+        rule_version, scenario_id = _PROFILES[policy_profile]
+    except KeyError as error:
+        raise PolicyInputError(f"unsupported pedestrian policy profile: {policy_profile!r}") from error
     reasons: list[str] = []
     warnings: list[str] = []
     access = _access(raw_tags, absent_is_neutral=True)
@@ -351,7 +381,7 @@ def evaluate_node(osm_id: str, tags: Mapping[str, str]) -> NodeEvaluation:
     else:
         disposition = "pass"
     return NodeEvaluation(
-        RULE_VERSION, SCENARIO_ID, "node", node_id, disposition,
+        rule_version, scenario_id, "node", node_id, disposition,
         tuple(dict.fromkeys(reasons)), tuple(dict.fromkeys(warnings)),
         tuple(sorted(set(conditional_keys) | set(variant_keys))),
     )

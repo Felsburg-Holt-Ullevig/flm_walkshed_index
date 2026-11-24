@@ -11,6 +11,7 @@ The prototype turns a saved OpenStreetMap extract into a pedestrian network, fol
 5. Produce a validated network package. The browser loads and traverses a small synthetic package in a worker.
 6. Read separate 2020 blocks and 2024 block-group geometries with 2020–2024 ACS estimates. Local county joins and output reopening have been checked.
 7. Compare 25-foot and 50-foot bands on each side of reached lines, area-weighted counts and representative-point counts, and merged overlap totals. Export GeoPackage and CSV evidence.
+8. Build a compact Larimer County walking network with original OSM access and walking-related tags for local GIS inspection. The hosted ArcGIS round trip was set aside. See the [build guide](../pipeline/larimer-compact.md).
 
 ## What the results mean
 

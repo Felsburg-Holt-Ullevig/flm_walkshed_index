@@ -8,6 +8,7 @@ from flm_pipeline.pedestrian_config import PedestrianConfigError, load_pedestria
 
 ROOT = Path(__file__).resolve().parents[2]
 ACCEPTED = ROOT / "pipeline/config/pedestrian-policy.example.toml"
+INCLUSIVE = ROOT / "pipeline/config/larimer-inclusive-road-pilot.toml"
 
 
 def _write_variant(tmp_path, scenario_id, speed):
@@ -33,6 +34,14 @@ def test_original_policy_retains_historical_float_tolerance(tmp_path):
 def test_new_reference_scenario_accepts_exact_2_8_mph(tmp_path):
     settings = load_pedestrian_settings(_write_variant(tmp_path, "plan-a-walk-reference-2.8-v1", "2.8"))
     assert settings.scenario_id == "plan-a-walk-reference-2.8-v1"
+    assert settings.speed_mph == 2.8
+
+
+def test_larimer_inclusive_profile_is_explicit_opt_in():
+    settings = load_pedestrian_settings(INCLUSIVE)
+    assert settings.policy_profile == "larimer-inclusive"
+    assert settings.rule_version == "pedestrian-policy-larimer-inclusive-1"
+    assert settings.scenario_id == "larimer-inclusive-road-pilot-v1"
     assert settings.speed_mph == 2.8
 
 
