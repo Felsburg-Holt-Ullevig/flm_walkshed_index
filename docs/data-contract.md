@@ -1,5 +1,9 @@
 # Data contract status and boundaries
 
+The [Larimer GeoPackage](../pipeline/larimer-compact.md) is a local GIS
+derivative with line and node layers, source IDs, and optional original OSM
+way tags. The browser package uses its separately versioned manifest and schema.
+
 Status: offline source and internal graph contracts are implemented experimentally. The developer accepted the [version 1 experimental package schemas](../contracts/network-package/v1/README.md), synthetic expectations and provisional limits. Task 5.2 implements offline packaging, full Python schema/cross-file validation, local promotion and synthetic CI. Task 5.3 implements synthetic browser loading and source-node reachability; Gate 5A is accepted. Regional analytical promotion remains blocked.
 
 ## Separate products

@@ -1,5 +1,8 @@
 # Shared validation policy
 
+The [Larimer build guide](../pipeline/larimer-compact.md) describes local
+GeoPackage checks and the status of walkshed and hosting validation.
+
 This is the verification policy for all agents. Tool-specific instruction files must not weaken or duplicate it.
 
 ## Checks available now

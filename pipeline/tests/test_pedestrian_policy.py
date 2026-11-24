@@ -61,6 +61,35 @@ def test_missing_highway_is_unknown_even_with_permission() -> None:
     assert "H_UNSUPPORTED" in result.reason_codes
 
 
+def test_larimer_profile_includes_default_trunk_but_baseline_does_not() -> None:
+    baseline = way({"highway": "trunk"})
+    experimental = evaluate_way("100", ("1", "2"), {"highway": "trunk"}, policy_profile="larimer-inclusive")
+    assert baseline.eligibility == "exclude"
+    assert experimental.eligibility == "include"
+    assert experimental.rule_version == "pedestrian-policy-larimer-inclusive-1"
+    assert experimental.scenario_id == "larimer-inclusive-road-pilot-v1"
+    assert "H_TRUNK_ASSUMED_WALKABLE" in experimental.reason_codes
+
+
+@pytest.mark.parametrize("tags", [
+    {"highway": "trunk", "foot": "no"},
+    {"highway": "trunk", "access": "private"},
+    {"highway": "trunk", "foot": "destination"},
+    {"highway": "motorway", "foot": "yes"},
+    {"highway": "motorway_link", "access": "yes"},
+    {"highway": "residential", "motorroad": "yes", "foot": "yes"},
+])
+def test_larimer_profile_preserves_restrictions_and_excludes_motorroads(tags) -> None:
+    result = evaluate_way("100", ("1", "2"), tags, policy_profile="larimer-inclusive")
+    assert result.eligibility in {"exclude", "unknown"}
+    if tags.get("highway") in {"motorway", "motorway_link"}:
+        assert result.eligibility == "exclude"
+        assert "H_LIMITED_ACCESS" in result.reason_codes
+    if tags.get("motorroad") == "yes":
+        assert result.eligibility == "exclude"
+        assert "H_MOTORROAD_EXCLUDE" in result.reason_codes
+
+
 @pytest.mark.parametrize(
     ("key", "value", "eligibility", "reason"),
     [

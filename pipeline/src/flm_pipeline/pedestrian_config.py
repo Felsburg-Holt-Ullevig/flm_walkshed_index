@@ -16,6 +16,7 @@ class PedestrianConfigError(ValueError):
 
 @dataclass(frozen=True)
 class PedestrianSettings:
+    policy_profile: str
     rule_version: str
     scenario_id: str
     status: str
@@ -60,11 +61,17 @@ _EXPECTED = {
     "unknown_node": "quarantine_incident_segments",
     "blocked_node": "exclude_incident_segments",
 }
+_PROFILES = {
+    ("pedestrian-policy-0.3", "public-walk-experiment-0.3"): ("baseline", "pipeline/pedestrian-policy.md"),
+    ("pedestrian-policy-0.3", "plan-a-walk-reference-2.8-v1"): ("baseline", "pipeline/pedestrian-policy.md"),
+    ("pedestrian-policy-larimer-inclusive-1", "larimer-inclusive-road-pilot-v1"): ("larimer-inclusive", "pipeline/larimer-inclusive-road-pilot.md"),
+}
 _SPEED_MPH = 4500 / 1609.344
 _METERS_PER_FOOT = 0.3048
 _SCENARIO_SPEEDS = {
     "public-walk-experiment-0.3": _SPEED_MPH,
     "plan-a-walk-reference-2.8-v1": 2.8,
+    "larimer-inclusive-road-pilot-v1": 2.8,
 }
 
 
@@ -107,10 +114,21 @@ def load_pedestrian_settings(path: str | Path) -> PedestrianSettings:
         if missing:
             details.append(f"missing fields: {', '.join(missing)}")
         raise PedestrianConfigError(f"configuration: {'; '.join(details)}")
+    rule_version = raw.get("rule_version")
+    scenario_id_value = raw.get("scenario_id")
+    if not isinstance(rule_version, str) or not isinstance(scenario_id_value, str):
+        raise PedestrianConfigError("rule_version and scenario_id must be text")
+    profile = _PROFILES.get((rule_version, scenario_id_value))
+    if profile is None:
+        raise PedestrianConfigError("rule_version and scenario_id must be an approved policy pair")
+    if raw.get("rule_authority") != profile[1]:
+        raise PedestrianConfigError(f"rule_authority must be {profile[1]!r} for this policy pair")
     for key, expected in _EXPECTED.items():
-        if key in {"scenario_id", "feet_per_mile", "length_unit", "time_unit", "crossing_delay_model", "steps_cost_model", "slope_cost_model"}:
+        if key in {"rule_authority", "scenario_id", "feet_per_mile", "length_unit", "time_unit", "crossing_delay_model", "steps_cost_model", "slope_cost_model"}:
             continue
         if key in {"origin_mode", "access_connectors", "snap_distance_ft", "unknown_candidates", "unknown_node", "blocked_node"}:
+            continue
+        if key == "rule_version":
             continue
         if raw.get(key) != expected:
             raise PedestrianConfigError(f"{key} must be {expected!r}")
@@ -149,9 +167,7 @@ def load_pedestrian_settings(path: str | Path) -> PedestrianSettings:
         if actual != expected:
             raise PedestrianConfigError(f"completeness.{key} must be {expected!r}")
     speed = cost["speed_mph"]
-    scenario_id = raw.get("scenario_id")
-    if not isinstance(scenario_id, str):
-        raise PedestrianConfigError("scenario_id must be text")
+    scenario_id = scenario_id_value
     expected_speed = _SCENARIO_SPEEDS.get(scenario_id)
     if expected_speed is None:
         raise PedestrianConfigError(f"scenario_id must be one of {', '.join(sorted(_SCENARIO_SPEEDS))}")
@@ -172,7 +188,7 @@ def load_pedestrian_settings(path: str | Path) -> PedestrianSettings:
     if not isinstance(raw["rule_authority"], str) or not raw["rule_authority"]:
         raise PedestrianConfigError("rule_authority must be a non-empty string")
     return PedestrianSettings(
-        rule_version=raw["rule_version"], scenario_id=raw["scenario_id"], status=raw["status"],
+        policy_profile=profile[0], rule_version=raw["rule_version"], scenario_id=raw["scenario_id"], status=raw["status"],
         rule_authority=raw["rule_authority"], comparison_scenario_id=raw["comparison_scenario_id"],
         reference_revision=raw["reference_revision"], length_unit=cost["length_unit"],
         time_unit=cost["time_unit"], speed_mph=float(speed), feet_per_mile=cost["feet_per_mile"],

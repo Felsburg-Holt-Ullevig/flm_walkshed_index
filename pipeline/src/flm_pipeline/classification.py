@@ -31,7 +31,8 @@ _REASON_STAGE = {
     "A_FOOT_ALLOW": 1, "A_FOOT_PERMISSIVE": 1, "A_FOOT_DENY": 1, "A_FOOT_UNSUPPORTED": 1,
     "A_ACCESS_ALLOW": 1, "A_ACCESS_PERMISSIVE": 1, "A_ACCESS_DENY": 1,
     "A_ACCESS_UNSUPPORTED": 1, "A_DEFAULT": 1,
-    "H_DEFAULT_INCLUDE": 2, "H_LIMITED_ACCESS": 2, "H_FOOT_UNCONFIRMED": 2,
+    "H_DEFAULT_INCLUDE": 2, "H_LIMITED_ACCESS": 2, "H_TRUNK_ASSUMED_WALKABLE": 2,
+    "H_MOTORROAD_EXCLUDE": 2, "H_FOOT_UNCONFIRMED": 2,
     "A_CONDITIONAL_UNRESOLVED": 3, "A_VARIANT_UNSUPPORTED": 3,
     "D_BOTH": 4, "D_FORWARD": 4, "D_REVERSE": 4, "D_UNSUPPORTED": 4,
     "B_ACCESS_BLOCK": 5, "B_PHYSICAL_BLOCK": 5, "B_PERMISSION_PASS": 5,
@@ -376,7 +377,7 @@ def run_classification(
             tags = _tags(row["tags"], f"way {way_id}", line_number)
             if "highway" not in tags:
                 raise ClassificationError(f"Selected source way {way_id} is missing its highway tag")
-            evaluation = evaluate_way(way_id, refs, tags)
+            evaluation = evaluate_way(way_id, refs, tags, policy_profile=settings.policy_profile)
             evaluation_dict = evaluation.to_dict()
             way_output.write(_json_bytes({
                 "source": {"entity_type": "way", "osm_id": way_id, "node_refs": refs, "tags_file": "ways.jsonl"},
@@ -407,7 +408,7 @@ def run_classification(
                 if node_row is None:
                     raise ClassificationError(f"Way {way_id} references missing required node {node_id}")
                 node_tags = json.loads(node_row[0])
-                node_eval = evaluate_node(node_id, node_tags)
+                node_eval = evaluate_node(node_id, node_tags, policy_profile=settings.policy_profile)
                 node_eval_json = _json_bytes(node_eval.to_dict()).decode("utf-8")
                 connection.execute("INSERT INTO evaluated_nodes VALUES (?, ?)", (node_id, node_eval_json))
                 endpoint_evaluations[node_id] = node_eval

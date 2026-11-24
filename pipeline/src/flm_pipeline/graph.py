@@ -246,13 +246,13 @@ def build_graph(extraction_path, classification_path, policy_config_path, stage,
         with (stage / "segments.jsonl").open("wb") as segments, (stage / "arcs.jsonl").open("wb") as arcs:
             for way_number, (_, way) in enumerate(_jsonl(extraction / "ways.jsonl", "source way"), 1):
                 refs = way["node_refs"]
-                evaluation = evaluate_way(way["osm_id"], refs, way["tags"])
+                evaluation = evaluate_way(way["osm_id"], refs, way["tags"], policy_profile=settings.policy_profile)
                 nodes = {}
                 for ref in set(refs):
                     record = connection.execute("SELECT lon,lat,tags FROM nodes WHERE id=?", (ref,)).fetchone()
                     _require(record is not None, f"Missing source node {ref}")
                     nodes[ref] = record
-                node_results = {ref: evaluate_node(ref, json.loads(row[2])) for ref, row in nodes.items()}
+                node_results = {ref: evaluate_node(ref, json.loads(row[2]), policy_profile=settings.policy_profile) for ref, row in nodes.items()}
                 for sequence in range(len(refs) - 1):
                     expected = _candidate_record(way["osm_id"], sequence, refs, evaluation, node_results)
                     candidate = next(candidates, None)

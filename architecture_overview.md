@@ -67,6 +67,18 @@ comparison product; it adds no application routing engine, polygons, or Census
 processing. See [reference usage](pipeline/walk-reference.md). Generated outputs
 remain local experimental data with coverage unestablished. Separate source/size and independent validation tools check whole source pairs, imperial costs, serialized sizes, saved traversal results, and reopened GIS records. Viewing-application import and human visual review remain separate checks.
 
+The [Larimer GIS pilot](pipeline/larimer-compact.md) uses the existing offline
+OSM extraction, classification and graph stages with a separate county pilot
+profile. The inclusive GeoPackage exports one line per eligible source segment
+and one point per endpoint. The compactor prunes isolated service roads and
+terminal vehicle-access branches while retaining links between walking routes
+and mapped destinations. It joins compatible lines through degree-two nodes,
+simplifies geometry at a 10-foot tolerance and keeps original summed walking
+lengths. In the tagged build, differing OSM tag values keep lines separate.
+Both exports reopen their line and node layers for verification. The compact
+build also writes a removal layer and source-segment ledger. The files are for
+local GIS inspection. The hosted ArcGIS round trip was set aside.
+
 ## Runtime analysis options
 
 | Option | Description |

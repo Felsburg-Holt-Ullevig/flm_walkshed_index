@@ -6,6 +6,9 @@ The intended workflow is to create or upload custom analysis points, generate ne
 
 Read the [plain-language prototype overview](docs/prototype-overview.md) for what works and its limits, or the [independent review guide](docs/independent-review.md) to inspect the implementation.
 
+The Larimer County pilot produces a compact walking-network GeoPackage for local
+GIS inspection. See the [offline build guide](pipeline/larimer-compact.md).
+
 ## Maintainer entry points
 
 - [Developer guide](DEVELOPER.md): setup, commands, reviewing changes, CI, and releases.

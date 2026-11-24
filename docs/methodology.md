@@ -48,6 +48,11 @@ None yet. Record each as: identifier, definition, method version, approval date,
 
 ## Experimental graph review boundary
 
+The [Larimer pilot profile](../pipeline/larimer-inclusive-road-pilot.md) adds
+experimental highway eligibility and [export pruning](../pipeline/larimer-compact.md)
+for local GIS review. Policy 0.3 remains the default experimental profile.
+Statewide adoption requires a separate methodology decision.
+
 Task 3.4 compares accepted pedestrian policy 0.2 against the pinned reference classification on identical source IDs and geodesic lengths. The [review procedure](../pipeline/graph-policy-review.md) defines that controlled comparison, components, source cases and diagnostic gap screening. The regional graph remains incomplete because unknown candidates and unsupported restrictions block analytical promotion. Conservative treatment of kerbs, level tags and unrelated-mode conditionals is explicit; no policy refinement or corrected benchmark is approved by the comparison. Gate 3 requires developer acceptance of the exact scenario and limitations. Synthetic reference design can be authorized separately from complete regional walking analysis. No authoritative definitions are added here.
 
 
