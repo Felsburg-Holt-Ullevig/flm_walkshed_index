@@ -14,6 +14,9 @@ export interface OverlayStyle {
   onTop: LayerSpecification[];
 }
 
+/** No application layers yet; stations and walksheds will be added here. */
+export const NO_OVERLAYS: OverlayStyle = { sources: {}, belowLabels: [], onTop: [] };
+
 export const BACKGROUND_LAYER_ID = 'app/background';
 export const BACKGROUND_COLOR = '#f2f2f0';
 

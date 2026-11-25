@@ -1,4 +1,4 @@
-﻿import {
+import {
   BASEMAP_LAYER_PREFIX,
   BasemapError,
   type BasemapStyle,

@@ -1,9 +1,10 @@
 /**
  * Builds public/data/place-labels.geojson: one label point per Colorado municipality,
- * census-designated place and Denver statistical neighbourhood, with the attributes the label
- * hierarchy needs. Sources and licences are recorded in public/data/README.md.
+ * census-designated place and Denver neighbourhood, with the attributes the label hierarchy
+ * needs. Sources and licences are recorded in public/data/README.md.
  *
  * Usage: node scripts/build-place-labels.mjs
+ * Set OVERPASS_URL to use another OpenStreetMap Overpass API instance.
  */
 import { writeFile } from 'node:fs/promises';
 
@@ -11,8 +12,9 @@ const TIGER =
   'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Census2020/MapServer';
 const INCORPORATED = 26;
 const CENSUS_DESIGNATED = 28;
-const DENVER_NEIGHBORHOODS =
-  'https://services1.arcgis.com/zdB7qR0BtYrg0Xpl/arcgis/rest/services/ODC_ADMN_NEIGHBORHOOD_A/FeatureServer/13';
+const OVERPASS = process.env.OVERPASS_URL || 'https://overpass-api.de/api/interpreter';
+/** Census GEOID of the City and County of Denver, whose boundary clips the neighbourhood names. */
+const DENVER_GEOID = '0820000';
 const GNIS = 'https://carto.nationalmap.gov/arcgis/rest/services/geonames/MapServer/3';
 const OUTPUT = 'public/data/place-labels.geojson';
 
@@ -95,6 +97,78 @@ function labelPoint(place) {
   return best ?? census;
 }
 
+/** Even-odd ray test against every ring, so holes and separate parts are handled alike. */
+function inside([x, y], rings) {
+  let hit = false;
+  for (const ring of rings)
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const [xi, yi] = ring[i];
+      const [xj, yj] = ring[j];
+      if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) hit = !hit;
+    }
+  return hit;
+}
+
+async function denverBoundary() {
+  const body = await getJson(
+    `${TIGER}/${INCORPORATED}/query?where=GEOID%3D%27${DENVER_GEOID}%27&returnGeometry=true&outSR=4326&f=json`,
+  );
+  const rings = body.features?.[0]?.geometry?.rings;
+  if (!rings?.length) throw Error('Denver boundary not found in TIGERweb');
+  return rings;
+}
+
+/**
+ * OpenStreetMap neighbourhood names (place=suburb, neighbourhood or quarter) inside Denver.
+ * Point features give the mapped label position, so they win over the centre of an area with
+ * the same name. Historic districts and unnamed features are left out. When names repeat, a
+ * suburb-level feature is kept over a smaller one.
+ */
+async function osmNeighborhoods() {
+  const rings = await denverBoundary();
+  const xs = rings.flat().map(([x]) => x);
+  const ys = rings.flat().map(([, y]) => y);
+  const box = [Math.min(...ys), Math.min(...xs), Math.max(...ys), Math.max(...xs)].join(',');
+  const query = `[out:json][timeout:90];nwr["place"~"^(suburb|neighbourhood|quarter)$"](${box});out center tags;`;
+  let body;
+  for (let attempt = 1; ; attempt++) {
+    const response = await fetch(OVERPASS, {
+      method: 'POST',
+      body: new URLSearchParams({ data: query }),
+    });
+    if (response.ok) {
+      body = await response.json();
+      break;
+    }
+    // Overpass answers 429/504 when busy; wait and retry.
+    if (attempt >= 4) throw Error(`Overpass HTTP ${response.status}`);
+    await new Promise((resolve) => setTimeout(resolve, 5000 * attempt));
+  }
+  const byName = new Map();
+  for (const element of body.elements) {
+    const name = element.tags?.name;
+    const at =
+      element.type === 'node'
+        ? [element.lon, element.lat]
+        : element.center && [element.center.lon, element.center.lat];
+    if (!name || !at || /historic district/i.test(name) || !inside(at, rings)) continue;
+    const current = byName.get(name);
+    const rank = (e) => (e.tags.place === 'suburb' ? 2 : 0) + (e.type === 'node' ? 1 : 0);
+    if (!current || rank(element) > rank(current.element)) byName.set(name, { element, at });
+  }
+  console.log(`OpenStreetMap data as of ${body.osm3s?.timestamp_osm_base ?? 'unknown'}`);
+  return [...byName.entries()].map(([name, { element, at }]) =>
+    point(at[0], at[1], {
+      name,
+      kind: 'neighborhood',
+      // OSM tags district-scale neighbourhoods `suburb` and smaller areas, including
+      // subdivisions, `neighbourhood`; the smaller ones appear only when zoomed further in.
+      tier: element.tags.place === 'suburb' ? 2 : 3,
+      source: `osm:${element.type}/${element.id}`,
+    }),
+  );
+}
+
 const round = (value) => Math.round(Number(value) * 1e5) / 1e5;
 const point = (lon, lat, properties) => ({
   type: 'Feature',
@@ -128,20 +202,7 @@ for (const place of await tigerPlaces(CENSUS_DESIGNATED)) {
   );
 }
 
-const neighborhoods = await getJson(
-  `${DENVER_NEIGHBORHOODS}/query?where=1%3D1&outFields=NBHD_ID,NBHD_NAME&returnGeometry=false&returnCentroid=true&outSR=4326&f=json`,
-);
-for (const { attributes, centroid } of neighborhoods.features) {
-  if (!centroid) throw Error(`Neighbourhood ${attributes.NBHD_NAME} has no label point`);
-  features.push(
-    point(centroid.x, centroid.y, {
-      name: attributes.NBHD_NAME,
-      kind: 'neighborhood',
-      tier: 3,
-      source: `denver:${attributes.NBHD_ID}`,
-    }),
-  );
-}
+features.push(...(await osmNeighborhoods()));
 
 // Larger places first, so ties in collision placement favour them.
 features.sort((a, b) => (b.properties.population ?? 0) - (a.properties.population ?? 0));

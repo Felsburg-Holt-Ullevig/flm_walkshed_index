@@ -8,18 +8,19 @@ import { LOCAL_FONT_BOLD, LOCAL_FONT_ITALIC, LOCAL_FONT_REGULAR } from './oit-ve
  *
  * - municipalities: bold spaced capitals, sized by population tier;
  * - unincorporated communities (census-designated places): regular, mixed case;
- * - Denver neighbourhoods: italic spaced capitals, lighter, at walkshed zooms.
+ * - Denver neighbourhoods (OpenStreetMap): italic spaced capitals, lighter, at walkshed zooms;
+ *   smaller named areas only from zoom 14.
  */
 export const PLACES_SOURCE_ID = 'basemap-places';
 export const PLACES_LAYER_PREFIX = 'basemap/places-';
 
-export const PLACES_ATTRIBUTION =
-  'Places: U.S. Census Bureau, USGS GNIS; neighbourhoods: City and County of Denver';
+export const PLACES_ATTRIBUTION = 'Places: U.S. Census Bureau, USGS GNIS, OpenStreetMap';
 
 type Kind = 'municipality' | 'community' | 'neighborhood';
 
 interface PlaceTier {
   kind: Kind;
+  /** Population tier for places; for neighbourhoods, 2 is district scale and 3 smaller areas. */
   tier: 1 | 2 | 3;
   minzoom: number;
   maxzoom: number;
@@ -87,12 +88,22 @@ export const PLACE_TIERS: readonly PlaceTier[] = [
   },
   {
     kind: 'neighborhood',
-    tier: 3,
+    tier: 2,
     minzoom: 12,
     maxzoom: 17,
     sizes: [10, 11, 12.5],
     color: '#666666',
     priority: 3.5,
+  },
+  {
+    kind: 'neighborhood',
+    tier: 3,
+    minzoom: 14,
+    maxzoom: 17,
+    sizes: [9, 10, 11],
+    // Lightest grey that keeps 4.5:1 contrast on white.
+    color: '#767676',
+    priority: 3.4,
   },
 ];
 

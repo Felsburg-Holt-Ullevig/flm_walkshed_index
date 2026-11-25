@@ -54,7 +54,7 @@ async function stubServices(page: Page, options: StubOptions = {}) {
 const mapArea = (page: Page) => page.locator('.map-area');
 const status = (page: Page) => page.getByRole('status');
 
-test('shows the shell, the default muted basemap and fixture overlays', async ({ page }) => {
+test('shows the shell and the default muted basemap', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   const requested = await stubServices(page);
@@ -67,11 +67,17 @@ test('shows the shell, the default muted basemap and fixture overlays', async ({
   await expect(page.getByText(/^Build /)).toBeVisible();
   await expect(mapArea(page)).toHaveAttribute('data-basemap', 'oit-vector-muted');
   await expect(mapArea(page)).toHaveAttribute('data-basemap-state', 'ready');
-  await expect(status(page)).toHaveText('Basemap loaded: Muted style.');
+  await expect(status(page)).toHaveText('Basemap style loaded: Muted.');
   await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText('OpenStreetMap');
   await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText('U.S. Census Bureau');
   expect(new Set(requested)).toEqual(new Set([VECTOR_HOST]));
   expect(errors).toEqual([]);
+
+  // The scale bar stays visible and clear of the attribution line, which can wrap.
+  const scale = await page.locator('.maplibregl-ctrl-scale').boundingBox();
+  const credit = await page.locator('.maplibregl-ctrl-attrib').boundingBox();
+  expect(scale && credit).toBeTruthy();
+  if (scale && credit) expect(scale.y + scale.height).toBeLessThan(credit.y);
   await page.screenshot({ path: 'data/staging/prototype/shell-desktop.png' });
 });
 
@@ -84,7 +90,7 @@ test('switches basemap styles and labels, and records them in the address', asyn
 
   await page.getByRole('radio', { name: /^Dark/ }).check();
   await expect(mapArea(page)).toHaveAttribute('data-basemap', 'oit-vector-dark');
-  await expect(status(page)).toHaveText('Basemap loaded: Dark style.');
+  await expect(status(page)).toHaveText('Basemap style loaded: Dark.');
   await expect(page).toHaveURL(/basemap=dark/);
   await expect.poll(async () => (await canvas.screenshot()).equals(muted)).toBe(false);
 
@@ -104,7 +110,7 @@ test('loads the map engine and its worker from a subdirectory', async ({ page })
   await expect(mapArea(page)).toHaveAttribute('data-basemap-state', 'ready');
 });
 
-test('keeps overlays and offers alternatives when the basemap is unavailable', async ({ page }) => {
+test('offers alternatives when the basemap is unavailable', async ({ page }) => {
   await stubServices(page, { style: 'unavailable' });
   await page.goto('/');
   await expect(mapArea(page)).toHaveAttribute('data-basemap-state', 'unavailable');

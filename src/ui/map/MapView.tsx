@@ -14,7 +14,6 @@ import type { BasemapId, BasemapStyle } from '../../adapters/basemaps/basemap';
 import type { LabelPreset } from '../../adapters/basemaps/labels';
 import { basemapById } from '../../adapters/basemaps/registry';
 import { composeStyle, type OverlayStyle } from './compose-style';
-import { FIXTURE_VIEW } from './fixtures';
 
 setWorkerUrl(workerUrl);
 
@@ -30,6 +29,9 @@ interface MapViewProps {
   overlays: OverlayStyle;
   onBasemapState: (state: BasemapState) => void;
 }
+
+/** Opening view: downtown Denver at a station-area scale. */
+const INITIAL_VIEW = { center: [-105.0, 39.7535] as [number, number], zoom: 14 };
 
 // Colorado with a margin; the state basemap has no content beyond its borders.
 const MAX_BOUNDS: [[number, number], [number, number]] = [
@@ -76,8 +78,8 @@ export function MapView({ basemapId, labels, overlays, onBasemapState }: MapView
     const map = new MapLibreMap({
       container: container.current,
       style: composeStyle(null, overlaysRef.current),
-      center: FIXTURE_VIEW.center,
-      zoom: FIXTURE_VIEW.zoom,
+      center: INITIAL_VIEW.center,
+      zoom: INITIAL_VIEW.zoom,
       maxBounds: MAX_BOUNDS,
       dragRotate: false,
       pitchWithRotate: false,
@@ -87,7 +89,8 @@ export function MapView({ basemapId, labels, overlays, onBasemapState }: MapView
     map.touchZoomRotate.disableRotation();
     map.keyboard.disableRotation();
     map.addControl(new NavigationControl({ showCompass: false }), 'top-right');
-    map.addControl(new ScaleControl({ unit: 'imperial', maxWidth: 120 }), 'bottom-left');
+    // Top left: the attribution line along the bottom wraps and would cover it.
+    map.addControl(new ScaleControl({ unit: 'imperial', maxWidth: 120 }), 'top-left');
     map.on('error', (event: MapEventType['error']) => {
       const sourceId = (event as { sourceId?: unknown }).sourceId;
       if (typeof sourceId === 'string' && sourceId.startsWith('basemap')) tileFailures.current++;

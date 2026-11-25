@@ -10,7 +10,7 @@ for (const [basemap, param] of [
   ['oit-vector', 'standard'],
   ['oit-raster', 'images'],
 ] as const) {
-  test(`live ${basemap} basemap loads at the fixture view`, async ({ page }) => {
+  test(`live ${basemap} basemap loads at the opening view`, async ({ page }) => {
     test.setTimeout(180000);
     const hosts = new Map<string, number>();
     const failed: string[] = [];

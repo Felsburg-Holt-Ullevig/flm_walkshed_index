@@ -1,10 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { PLACE_TIERS, placeLayers } from './places';
+import { PLACE_TIERS, PLACES_ATTRIBUTION, placeLayers } from './places';
 
 interface PlaceFeature {
   geometry: { type: string; coordinates: [number, number] };
-  properties: { name: string; kind: string; tier: number; population?: number };
+  properties: { name: string; kind: string; tier: number; population?: number; source: string };
 }
 
 const file = JSON.parse(readFileSync('public/data/place-labels.geojson', 'utf8')) as {
@@ -48,6 +48,30 @@ describe('place-label file', () => {
         ?.properties.tier;
     expect(tierOf('Denver')).toBe(1);
     expect(tierOf('Aurora')).toBe(1);
+  });
+});
+
+describe('neighbourhood labels', () => {
+  const neighbourhoods = file.features.filter((f) => f.properties.kind === 'neighborhood');
+
+  it('come from OpenStreetMap, without historic districts or repeated names', () => {
+    expect(neighbourhoods.length).toBeGreaterThan(0);
+    for (const { properties } of neighbourhoods) {
+      expect(properties.source).toMatch(/^osm:(node|way|relation)\/\d+$/);
+      expect(properties.name).not.toMatch(/historic district/i);
+    }
+    const names = neighbourhoods.map((f) => f.properties.name);
+    expect(new Set(names).size).toBe(names.length);
+  });
+
+  it('are credited to OpenStreetMap', () => {
+    expect(PLACES_ATTRIBUTION).toContain('OpenStreetMap');
+  });
+
+  it('show smaller named areas only after district-scale neighbourhoods', () => {
+    const minzoom = (tier: number) =>
+      PLACE_TIERS.find((entry) => entry.kind === 'neighborhood' && entry.tier === tier)?.minzoom;
+    expect(minzoom(2)).toBeLessThan(minzoom(3) ?? 0);
   });
 });
 

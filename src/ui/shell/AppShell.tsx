@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useState } from 'react';
 import type { BasemapId } from '../../adapters/basemaps/basemap';
 import {
   BASEMAPS,
@@ -8,8 +8,8 @@ import {
   labelsFromAddress,
   prefetchBasemap,
 } from '../../adapters/basemaps/registry';
+import { NO_OVERLAYS } from '../map/compose-style';
 import type { BasemapState } from '../map/MapView';
-import { buildOverlays } from '../map/overlays';
 
 // The map engine is the largest dependency; loading it separately lets the page shell render first.
 const MapView = lazy(() =>
@@ -24,7 +24,7 @@ function statusMessage(id: BasemapId, state: BasemapState): string {
         ? 'Loading basemap images. The state map server can take up to a minute in dense areas.'
         : 'Loading basemap.';
     case 'ready':
-      return id === 'none' ? 'No basemap selected.' : `Basemap loaded: ${basemap.label} style.`;
+      return id === 'none' ? 'No basemap selected.' : `Basemap style loaded: ${basemap.label}.`;
     case 'partial':
       return `${state.failedTiles} basemap ${state.failedTiles === 1 ? 'tile' : 'tiles'} did not load. Stations and walksheds still display.`;
     case 'unavailable':
@@ -56,10 +56,11 @@ export function AppShell() {
     setLabels(walkshed ? 'walkshed' : 'original');
     setAddressParam('labels', walkshed ? null : 'original');
   }, []);
-  // Runs on first render, before the lazily loaded map engine has arrived.
+  // Starts the slow style request during the first render, before the lazily loaded map engine
+  // arrives. A state initializer is used because it runs exactly once per mount, during render,
+  // which is earlier than an effect; prefetchBasemap ignores repeat calls (as in Strict Mode).
   useState(() => prefetchBasemap(basemapId));
   const [basemapState, setBasemapState] = useState<BasemapState>({ kind: 'loading' });
-  const overlays = useMemo(() => buildOverlays({ fixturesVisible: true }), []);
   const onBasemapState = useCallback((state: BasemapState) => setBasemapState(state), []);
 
   return (
@@ -120,7 +121,7 @@ export function AppShell() {
             <MapView
               basemapId={basemapId}
               labels={labels}
-              overlays={overlays}
+              overlays={NO_OVERLAYS}
               onBasemapState={onBasemapState}
             />
           </Suspense>

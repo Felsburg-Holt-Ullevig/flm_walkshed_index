@@ -1,6 +1,6 @@
 # 0015. Basemap styles, labels and caching
 
-Status: Proposed for the prototype; data-source and typography approval pending
+Status: Accepted for the prototype; typography and data-source approval pending
 Date: 2026-11-25
 
 ## Context
@@ -47,7 +47,7 @@ A walkshed label preset (default; `?labels=original` disables it):
 `public/data/place-labels.geojson` (560 points, about 93 kB), built by `scripts/build-place-labels.mjs`, replaces the tile place names:
 - municipalities and census-designated places from the U.S. Census Bureau (TIGERweb 2020), ranked into three tiers by 2020 population;
 - label positions from USGS GNIS populated-place points (454 of 482 matched by name within 40 km). The Census internal point is only guaranteed to lie inside a place, and was about 9 km from downtown Denver;
-- Denver statistical neighbourhoods from the City and County of Denver.
+- Denver neighbourhood names from OpenStreetMap (ODbL), clipped to Denver's Census boundary: 42 district-scale names (`place=suburb`) from zoom 12 and 49 smaller areas from zoom 14. Denver's own statistical-neighbourhood service was not used, because its terms require users to indemnify the City and County of Denver.
 
 Municipalities are drawn in bold spaced capitals, unincorporated communities in regular type, and neighbourhoods in italic spaced capitals. They are visible to zoom 15–17.
 
@@ -72,12 +72,12 @@ The service's response time varied widely between runs. Visual checks covered ea
 - **Labels look different from the published map.** Label typography changes from Avenir/Tahoma to Noto Sans. Characters outside the bundled ranges are not drawn.
 - **Return visits can be stale.** They show the basemap as last cached, and an OIT update appears one visit later. Cached responses occupy browser storage, about 10–30 MB at the limit.
 - **Style rewrites can silently stop applying.** They depend on the tile data layer names; if OIT renames them, a variant stops restyling those layers without an error.
-- **New data sources need approval.** Census and USGS data are public domain. Denver's neighbourhood data is provided "as is", and its terms require users to indemnify the City and County of Denver. The data owner must approve all three sources, and the typography change, before use beyond the prototype.
-- **Neighbourhood coverage is Denver only.** Place populations are from 2020 until the file is rebuilt.
+- **New data sources need approval.** Census and USGS data are public domain. OpenStreetMap data requires attribution and keeps the place-label file under the ODbL. The data owner should approve these sources, and the typography change, before use beyond the prototype.
+- **Neighbourhood coverage is Denver only, and partial.** OpenStreetMap names about 45 of Denver's 78 statistical neighbourhoods; areas such as Washington Park, Congress Park and Cherry Creek are unlabelled. Place populations are from 2020 until the file is rebuilt.
 - **The source data has quirks.** Its capitalisation ("18Th St") and inconsistent road-name variants cannot be corrected in the style.
 
 ## Revisit when
-- The data owner declines a source, the Denver terms, or the typography change.
+- The data owner declines a source or the typography change, or official neighbourhood names are needed for reporting.
 - OIT changes the service's tile data layers, cache headers or fonts.
 - Measured load times on the CDOT host differ materially from these.
 - A custom or self-hosted basemap is adopted.

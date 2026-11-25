@@ -4,6 +4,8 @@ MapLibre glyph files (signed-distance-field PBF) for the basemap's labels, serve
 application so label rendering does not wait on the tile service's slow font endpoint.
 
 - Font: Noto Sans Regular, Italic and Bold (Google Noto project), SIL Open Font License 1.1.
+  The licence and copyright notice are in `OFL.txt`, taken from the Noto project repository
+  (`notofonts/latin-greek-cyrillic`); the OFL requires them to accompany redistributed fonts.
 - Source: prebuilt glyphs from the OpenMapTiles fonts project,
   `https://github.com/openmaptiles/fonts`, `gh-pages` branch, folders
   `Klokantech Noto Sans Regular|Italic|Bold`, renamed here to `Noto Sans Regular|Italic|Bold`.

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { BasemapStyle } from '../../adapters/basemaps/basemap';
-import { BACKGROUND_LAYER_ID, composeStyle, type OverlayStyle } from './compose-style';
-import { buildOverlays } from './overlays';
+import { BACKGROUND_LAYER_ID, composeStyle, NO_OVERLAYS, type OverlayStyle } from './compose-style';
 
 const vectorBasemap: BasemapStyle = {
   sources: { 'basemap-v': { type: 'vector', tiles: ['https://x.test/{z}/{x}/{y}.pbf'] } },
@@ -74,17 +73,19 @@ describe('composeStyle', () => {
   });
 
   it('keeps the same overlays across every basemap', () => {
-    const real = buildOverlays({ fixturesVisible: true });
     const ids = (basemap: BasemapStyle | null) =>
-      composeStyle(basemap, real)
+      composeStyle(basemap, overlays)
         .layers.map((layer) => layer.id)
         .filter((id) => !id.startsWith('basemap') && id !== BACKGROUND_LAYER_ID);
     expect(ids(vectorBasemap)).toEqual(ids(null));
-    expect(ids(null)).toEqual([
-      'fixture-walksheds/fill',
-      'fixture-walksheds/outline-solid',
-      'fixture-walksheds/outline-dashed',
-      'fixture-stations/marker',
+    expect(ids(null)).toEqual(['walkshed', 'station']);
+  });
+
+  it('draws only the background and basemap when there are no overlays', () => {
+    const style = composeStyle(vectorBasemap, NO_OVERLAYS);
+    expect(style.layers.map((layer) => layer.id)).toEqual([
+      BACKGROUND_LAYER_ID,
+      ...vectorBasemap.layers.map((layer) => layer.id),
     ]);
   });
 
@@ -98,13 +99,5 @@ describe('composeStyle', () => {
     expect(() =>
       composeStyle(null, { ...overlays, sources: { 'basemap-x': emptySource } }),
     ).toThrow('reserved');
-  });
-});
-
-describe('buildOverlays', () => {
-  it('hides every fixture layer when fixtures are turned off', () => {
-    const hidden = buildOverlays({ fixturesVisible: false });
-    for (const layer of [...hidden.belowLabels, ...hidden.onTop])
-      expect(layer.layout && 'visibility' in layer.layout && layer.layout.visibility).toBe('none');
   });
 });

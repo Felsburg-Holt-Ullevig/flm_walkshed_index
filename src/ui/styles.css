@@ -180,7 +180,8 @@ input[type="radio"] {
 }
 .map-status {
   position: absolute;
-  top: 0.75rem;
+  /* Below the scale bar in the top-left corner. */
+  top: 2.75rem;
   left: 0.75rem;
   right: 3.5rem;
   max-width: 32rem;
@@ -228,11 +229,6 @@ input[type="radio"] {
   .map-area {
     flex: 1 0 auto;
     min-height: max(20rem, 60vh);
-  }
-  /* The attribution wraps at this width, so the scale bar moves to the top of the map. */
-  .map-area .maplibregl-ctrl-bottom-left {
-    top: 0;
-    bottom: auto;
   }
 }
 
