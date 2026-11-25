@@ -45,3 +45,4 @@ The concrete condition that would reopen the decision.
 | 0012 | [Plan A offline reference tests](0012-plan-a-reference-tests.md) | Accepted for experimental testing | 2026-11-11 |
 
 | 0013 | [Census indicator definitions and deferred methods](0013-census-indicator-definitions-and-deferred-methods.md) | Accepted definitions; implementation pending | 2026-11-12 |
+| 0014 | [Map renderer and provisional basemap](0014-map-renderer-and-provisional-basemap.md) | Accepted for the prototype; production basemap use pending | 2026-11-25 |

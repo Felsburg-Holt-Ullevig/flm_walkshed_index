@@ -41,5 +41,17 @@ export default defineConfig({
   define: { __APP_COMMIT__: JSON.stringify(commit) },
   server: { host: '127.0.0.1', port: 5173, strictPort: true },
   preview: { host: '127.0.0.1', port: 4173, strictPort: true },
-  build: { sourcemap: false },
+  build: {
+    sourcemap: false,
+    rolldownOptions: {
+      output: {
+        // The map engine's worker ships as .mjs. Some static hosts do not serve that extension
+        // with a JavaScript type, which module workers require, so it is emitted as .js.
+        assetFileNames: (asset) =>
+          asset.names.some((name) => name.endsWith('.mjs'))
+            ? 'assets/[name]-[hash].js'
+            : 'assets/[name]-[hash][extname]',
+      },
+    },
+  },
 });

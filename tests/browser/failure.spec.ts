@@ -11,7 +11,7 @@ for (const [name, code] of [
   ['cost', 'invalid_graph'],
 ] as const) {
   test(`rejects ${name} candidate and preserves current graph`, async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?view=network-review');
     await page.getByRole('button', { name: 'Load package' }).click();
     await expect(page.getByRole('status')).toContainText('Loaded synthetic');
     const manifest = JSON.parse(readFileSync(`${root}manifest.json`, 'utf8'));
@@ -43,7 +43,7 @@ for (const [name, code] of [
   });
 }
 test('cancels a pending candidate', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?view=network-review');
   await page.route('**/manifest.json', async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 500));
     await route.abort();

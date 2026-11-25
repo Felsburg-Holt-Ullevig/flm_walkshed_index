@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 for (const path of ['/', '/review/']) {
   test(`real package fetch and worker traversal at ${path}`, async ({ page }) => {
     page.on('pageerror', (error) => console.log('page error', error.message));
-    await page.goto(path, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${path}?view=network-review`, { waitUntil: 'domcontentloaded' });
     await page.getByRole('button', { name: 'Load package' }).click();
     await expect(page.getByRole('status')).toContainText('Loaded synthetic');
     console.log('load observation', await page.getByRole('status').textContent());

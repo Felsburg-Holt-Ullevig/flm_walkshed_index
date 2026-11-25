@@ -43,6 +43,12 @@ Run these from the repository root.
 | `pnpm build` | Runs typechecking and creates `dist/` static assets |
 | `pnpm preview` | Serves the built page at `http://127.0.0.1:4173/` until stopped |
 
+The page opens the map application shell. Add `?view=network-review` to the address for the experimental network-review harness.
+
+The default basemap loads from the State of Colorado OIT service at `ti-cooit.img.arcgis.com`; the alternate image basemap loads from `gis.colorado.gov`. `VITE_OIT_VECTOR_BASEMAP_URL` and `VITE_OIT_RASTER_BASEMAP_URL` replace those service addresses at build time. They hold public addresses only, never credentials. See [decision 0014](docs/decisions/0014-map-renderer-and-provisional-basemap.md).
+
+`pnpm test:browser` serves the built `dist/` folder, so run `pnpm build` first. Its map shell checks replace the state services with local stand-ins. To check the real services, run `pnpm build`, then set `FLM_LIVE_SERVICES=1` and run `pnpm test:browser tests/browser/live-basemap.spec.ts`. The live check reports whether each basemap loaded, the time taken and the hosts contacted; a failure there describes service availability, not an application regression.
+
 Both servers bind to the local computer and use fixed ports. If a port is occupied, identify the process instead of stopping an unrelated service. Opening `index.html` directly from disk is not the application workflow; Vite serves the TypeScript entry point.
 
 ## Roles and review

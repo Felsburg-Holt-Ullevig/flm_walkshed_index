@@ -20,6 +20,8 @@ The isolated offline Python package uses pytest for configuration, source valida
 
 Vitest for unit and integration tests and Playwright for browser tests are added in the first PR that introduces behavior to test (see [decision 0006](decisions/0006-test-tooling-introduced-with-the-first-testable-behavior.md)). Pure analytical tests and pinned deterministic integration fixtures run in ordinary CI. Live external-service checks run separately from the required CI checks and report service availability separately from application regressions.
 
+Map shell checks: Vitest covers the OIT vector style adapter (URL resolution, ID prefixing, label offsets, rejected inputs, fetch failures and cancellation) and style composition (overlay order and persistence across basemaps). `tests/browser/shell.spec.ts` replaces the state services with local stand-ins and checks basemap loading, fixture visibility, unavailable and partly failed basemaps, switching to the alternates, loading from a subdirectory, keyboard use of the panel and basemap choice, and reflow at 390 and 320 CSS pixels. `tests/browser/live-basemap.spec.ts` contacts the real services only when `FLM_LIVE_SERVICES=1`. These checks do not establish WCAG conformance, other browser engines or performance on the CDOT host.
+
 ## Verification by change
 
 | Change | Required evidence |

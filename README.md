@@ -2,7 +2,7 @@
 
 A web application in development for evaluating first/last mile walking access around transit stops and stations in Colorado.
 
-The intended workflow is to create or upload custom analysis points, generate network walksheds, examine metrics and index scores, and export results. The current prototype includes an offline pedestrian-network pipeline, a validated browser package loader and source-node reachability harness, and local Census/corridor allocation experiments. Scoring, coordinate-origin UI, session storage and final reporting remain future work.
+The intended workflow is to create or upload custom analysis points, generate network walksheds, examine metrics and index scores, and export results. The current prototype includes a map application shell with a provisional State of Colorado basemap and placeholder analysis panels, an offline pedestrian-network pipeline, a validated browser package loader and source-node reachability harness, and local Census/corridor allocation experiments. Scoring, coordinate-origin UI, session storage and final reporting remain future work.
 
 Read the [plain-language prototype overview](docs/prototype-overview.md) for what works and its limits, or the [independent review guide](docs/independent-review.md) to inspect the implementation.
 

@@ -28,7 +28,7 @@ node scripts/review-server.mjs
 
 
 
-Open `http://127.0.0.1:4174/` in a browser. Keep the terminal open. The loopback server serves built app files and five JSON files from the existing synthetic release `synthetic-f01-task52-20261104-e`; it exposes no general data-directory listing and copies no package into `dist` or `public`. Stop it with Ctrl+C. The same review is available at `http://127.0.0.1:4174/review/` to exercise subdirectory asset and package paths.
+Open `http://127.0.0.1:4174/?view=network-review` in a browser. The address without `?view=network-review` opens the map application shell instead. Keep the terminal open. The loopback server serves built app files and five JSON files from the existing synthetic release `synthetic-f01-task52-20261104-e`; it exposes no general data-directory listing and copies no package into `dist` or `public`. Stop it with Ctrl+C. The same review is available at `http://127.0.0.1:4174/review/?view=network-review` to exercise subdirectory asset and package paths.
 
 
 

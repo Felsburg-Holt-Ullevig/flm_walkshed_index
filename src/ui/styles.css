@@ -1,66 +1,359 @@
+/*
+ * Colour and type tokens. Brand values follow the CDOT brand quick guide; their use here is
+ * provisional until CDOT confirms branding for this application. Orange is decorative only
+ * (3.1:1 on white); yellow is never used on light backgrounds.
+ */
 :root {
-  font-family: system-ui, sans-serif;
-  color: #111;
-  background: #fff;
+  --cdot-dark-blue: #001970;
+  --cdot-orange: #e57200;
+  --cdot-red: #c3002f;
+  --text: #1d1f24;
+  --text-muted: #4a4f57;
+  --surface: #ffffff;
+  --surface-muted: #f3f4f6;
+  --border: #d4d7dd;
+  --control-border: #6b7280;
+  --focus: #001970;
+  --font-body:
+    "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif;
+  --panel-width: 22rem;
+  color-scheme: light;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--surface);
   font-synthesis: none;
+  line-height: 1.45;
 }
 
 * {
   box-sizing: border-box;
 }
+html,
+body,
+#root {
+  height: 100%;
+}
 body {
   margin: 0;
 }
-main {
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Application shell */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+.skip-link {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 10;
+  padding: 0.6rem 0.9rem;
+  background: var(--surface);
+  color: var(--cdot-dark-blue);
+  font-weight: bold;
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: none;
+}
+.app-header {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.6rem 1rem;
+  background: var(--cdot-dark-blue);
+  color: #fff;
+  border-bottom: 4px solid var(--cdot-orange);
+}
+.app-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+.app-tag {
+  margin: 0;
+  padding: 0.1rem 0.6rem;
+  border: 1px solid #fff;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+}
+.app-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: var(--panel-width) minmax(0, 1fr);
+}
+.app-body[data-panel="closed"] {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+/* Analysis panel */
+
+.panel {
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+}
+.panel:focus-visible {
+  outline-offset: -3px;
+}
+.panel-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.panel-head h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+button {
+  font: inherit;
+}
+.panel-toggle {
+  min-height: 2.5rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--cdot-dark-blue);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--cdot-dark-blue);
+  cursor: pointer;
+}
+.panel-toggle:hover {
+  background: var(--surface-muted);
+}
+.panel-content {
+  padding: 0 1rem 1rem;
+}
+.panel-section {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.panel-section h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.6rem;
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+  color: var(--cdot-dark-blue);
+}
+.section-status {
+  padding: 0 0.45rem;
+  border-radius: 3px;
+  background: var(--surface-muted);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: normal;
+}
+.section-body p {
+  margin: 0.4rem 0;
+}
+.note {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+.build {
+  margin: 1rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+/* Form controls */
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0.1rem 0 0;
+  flex: none;
+  accent-color: var(--cdot-dark-blue);
+}
+.check,
+.radio {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.35rem 0;
+  cursor: pointer;
+}
+.basemap-choice {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.basemap-choice legend {
+  padding: 0;
+  margin-bottom: 0.25rem;
+  font-weight: bold;
+}
+.radio-label {
+  display: block;
+}
+.radio-description {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+.legend {
+  margin: 0.25rem 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+}
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.15rem 0;
+}
+.swatch {
+  width: 1.75rem;
+  height: 1rem;
+  flex: none;
+  border: 3px solid;
+  border-radius: 3px;
+}
+.swatch[data-dashed="true"] {
+  border-style: dashed;
+}
+
+/* Map */
+
+.map-area {
+  position: relative;
+  min-height: 0;
+  background: #f2f2f0;
+}
+/* Qualified so it outranks MapLibre's own .maplibregl-map rule, which loads later. */
+.map-area .map-canvas {
+  position: absolute;
+  inset: 0;
+}
+.maplibregl-canvas:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: -3px;
+}
+.map-status {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  right: 3.5rem;
+  max-width: 32rem;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--cdot-dark-blue);
+  border-radius: 4px;
+  background: var(--surface);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
+  font-size: 0.875rem;
+}
+.map-status[data-kind="partial"] {
+  border-left-color: var(--cdot-orange);
+}
+.map-status[data-kind="unavailable"] {
+  border-left-color: var(--cdot-red);
+}
+/* Once the basemap is ready the message stays available to assistive technology only. */
+.map-status[data-kind="ready"] {
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 48rem) {
+  .app {
+    height: auto;
+    min-height: 100dvh;
+  }
+  /* Stacked: the panel takes its natural height and the map fills the rest of the screen. */
+  .app-body,
+  .app-body[data-panel="closed"] {
+    display: flex;
+    flex-direction: column;
+  }
+  .panel {
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .panel-head {
+    position: static;
+  }
+  .map-area {
+    flex: 1 0 auto;
+    min-height: max(20rem, 60vh);
+  }
+  /* The attribution wraps at this width, so the scale bar moves to the top of the map. */
+  .map-area .maplibregl-ctrl-bottom-left {
+    top: 0;
+    bottom: auto;
+  }
+}
+
+/* Experimental network review harness (?view=network-review) */
+
+.network-review main {
+  max-width: 60rem;
+  margin: auto;
   padding: 2rem;
 }
-h1 {
+.network-review h1 {
   margin: 0;
   font-size: 2rem;
   line-height: 1.2;
 }
-footer {
+.network-review footer {
   padding: 0 2rem 2rem;
   color: #444;
   font-size: 0.875rem;
 }
-footer p {
+.network-review footer p {
   margin: 0;
 }
-
-main {
-  max-width: 60rem;
-  margin: auto;
-}
-label {
+.network-review label {
   display: block;
   margin: 1rem 0;
 }
-input {
+.network-review input {
   display: block;
   width: 100%;
   padding: 0.6rem;
   font: inherit;
 }
-button {
+.network-review button {
   padding: 0.7rem;
   margin-right: 0.5rem;
-  font: inherit;
 }
-pre {
+.network-review pre {
   overflow: auto;
   padding: 1rem;
   background: #f3f4f6;
 }
-:focus-visible {
-  outline: 3px solid #155abd;
-  outline-offset: 3px;
-}
 @media (max-width: 480px) {
-  main {
+  .network-review main {
     padding: 1rem;
   }
-  h1 {
+  .network-review h1 {
     font-size: 1.6rem;
   }
 }
