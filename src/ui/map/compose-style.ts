@@ -12,6 +12,8 @@ export interface OverlayStyle {
   belowLabels: LayerSpecification[];
   /** Drawn above everything, including basemap labels. */
   onTop: LayerSpecification[];
+  /** Glyph template for overlay labels, used when the basemap supplies none. */
+  glyphs?: string;
 }
 
 /** No application layers yet; stations and walksheds will be added here. */
@@ -54,6 +56,7 @@ export function composeStyle(
     ],
   };
   if (basemap?.sprite !== undefined) style.sprite = basemap.sprite;
-  if (basemap?.glyphs !== undefined) style.glyphs = basemap.glyphs;
+  const glyphs = basemap?.glyphs ?? overlays.glyphs;
+  if (glyphs !== undefined) style.glyphs = glyphs;
   return style;
 }

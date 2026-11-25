@@ -34,7 +34,6 @@ export interface BasemapStyle {
 export interface BasemapDefinition {
   id: BasemapId;
   label: string;
-  description: string;
   /** Host that supplies imagery or tiles, shown so users know where map requests go. */
   host: string | null;
   /** `labels` applies to the vector basemaps only (see labels.ts). */

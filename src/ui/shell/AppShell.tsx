@@ -1,4 +1,13 @@
-import { lazy, Suspense, useCallback, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import type { BasemapId } from '../../adapters/basemaps/basemap';
 import {
   BASEMAPS,
@@ -6,10 +15,21 @@ import {
   basemapFromAddress,
   basemapParam,
   labelsFromAddress,
+  localGlyphsUrl,
   prefetchBasemap,
 } from '../../adapters/basemaps/registry';
-import { NO_OVERLAYS } from '../map/compose-style';
-import type { BasemapState } from '../map/MapView';
+import { loadLocations, saveLocations } from '../../adapters/storage/locations-store';
+import {
+  initialState,
+  type Location,
+  locationsReducer,
+  MAX_LOCATIONS,
+  redoChange,
+  undoChange,
+} from '../../domain/locations';
+import { LocationsPanel } from '../locations/LocationsPanel';
+import { locationsOverlay } from '../locations/overlay';
+import type { BasemapState, LocationInteraction, MapController } from '../map/MapView';
 
 // The map engine is the largest dependency; loading it separately lets the page shell render first.
 const MapView = lazy(() =>
@@ -26,9 +46,9 @@ function statusMessage(id: BasemapId, state: BasemapState): string {
     case 'ready':
       return id === 'none' ? 'No basemap selected.' : `Basemap style loaded: ${basemap.label}.`;
     case 'partial':
-      return `${state.failedTiles} basemap ${state.failedTiles === 1 ? 'tile' : 'tiles'} did not load. Stations and walksheds still display.`;
+      return `${state.failedTiles} basemap ${state.failedTiles === 1 ? 'tile' : 'tiles'} did not load. Locations still display.`;
     case 'unavailable':
-      return `Basemap unavailable (${state.reason}). Stations and walksheds still display.`;
+      return `Basemap unavailable (${state.reason}). Locations still display.`;
   }
 }
 
@@ -43,13 +63,32 @@ function setAddressParam(name: string, value: string | null): void {
 // Matches the stacked layout breakpoint in styles.css.
 const NARROW_QUERY = '(max-width: 48rem)';
 
+const isNarrow = () => window.matchMedia(NARROW_QUERY).matches;
+
+function isTextField(target: EventTarget | null): boolean {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable ||
+      target instanceof HTMLTextAreaElement ||
+      (target instanceof HTMLInputElement &&
+        !['checkbox', 'radio', 'button'].includes(target.type)))
+  );
+}
+
+interface Notice {
+  text: string;
+  undo?: boolean;
+}
+
 export function AppShell() {
-  const [startOpen] = useState(() => !window.matchMedia(NARROW_QUERY).matches);
+  const [startOpen] = useState(() => !isNarrow());
   // Starts from the address (e.g. ?basemap=dark) so a chosen look can be shared as a link.
   const [basemapId, setBasemapId] = useState(() => basemapFromAddress(window.location.search));
   const [labels, setLabels] = useState(() => labelsFromAddress(window.location.search));
+  const [notice, setNotice] = useState<Notice | null>(null);
   const chooseBasemap = useCallback((id: BasemapId) => {
     setBasemapId(id);
+    setNotice(null);
     setAddressParam('basemap', basemapParam(id));
   }, []);
   const chooseLabels = useCallback((walkshed: boolean) => {
@@ -63,17 +102,127 @@ export function AppShell() {
   const [basemapState, setBasemapState] = useState<BasemapState>({ kind: 'loading' });
   const onBasemapState = useCallback((state: BasemapState) => setBasemapState(state), []);
 
+  const [history, dispatch] = useReducer(locationsReducer, undefined, () =>
+    initialState(loadLocations() ?? undefined),
+  );
+  const locations = history.present.locations;
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [addMode, setAddMode] = useState(false);
+  const controller = useRef<MapController | null>(null);
+  const [saved, setSaved] = useState(true);
+
+  useEffect(() => setSaved(saveLocations(history.present)), [history.present]);
+  useEffect(() => {
+    if (selectedId && !locations.some((location) => location.id === selectedId))
+      setSelectedId(null);
+  }, [locations, selectedId]);
+  useEffect(() => {
+    if (addMode && locations.length >= MAX_LOCATIONS) setAddMode(false);
+  }, [addMode, locations.length]);
+
+  const add = useCallback((lng: number, lat: number) => {
+    const id = crypto.randomUUID();
+    dispatch({ type: 'add', id, lng, lat });
+    setSelectedId(id);
+    setNotice(null);
+  }, []);
+  const undo = useCallback(() => {
+    dispatch({ type: 'undo' });
+    setNotice(null);
+  }, []);
+  const redo = useCallback(() => {
+    dispatch({ type: 'redo' });
+    setNotice(null);
+  }, []);
+  const toggleAddMode = useCallback(() => {
+    setAddMode((on) => {
+      if (!on && isNarrow())
+        document.querySelector('.map-area')?.scrollIntoView({ block: 'nearest' });
+      return !on;
+    });
+  }, []);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && addMode) {
+        setAddMode(false);
+        return;
+      }
+      if (!(event.ctrlKey || event.metaKey) || isTextField(event.target)) return;
+      const key = event.key.toLowerCase();
+      if (key === 'z' && !event.shiftKey) undo();
+      else if ((key === 'z' && event.shiftKey) || key === 'y') redo();
+      else return;
+      event.preventDefault();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [addMode, undo, redo]);
+
+  const glyphs = useMemo(() => localGlyphsUrl(), []);
+  const overlays = useMemo(
+    () => locationsOverlay(locations, selectedId, glyphs),
+    [locations, selectedId, glyphs],
+  );
+  const interaction = useMemo<LocationInteraction>(
+    () => ({
+      items: locations,
+      selectedId,
+      addMode,
+      onAdd: add,
+      onSelect: setSelectedId,
+      onMove: (id, lng, lat) => dispatch({ type: 'move', id, lng, lat }),
+    }),
+    [locations, selectedId, addMode, add],
+  );
+
+  const shownNotice: Notice | null = addMode
+    ? { text: 'Click the map to add a location. Press Esc to stop.' }
+    : notice;
+
   return (
     <div className="app">
       <a className="skip-link" href="#panel">
-        Skip to map options
+        Skip to locations
       </a>
       <header className="app-header">
         <h1>FLM Walkshed Index</h1>
         <p className="app-tag">Development prototype</p>
       </header>
       <main className="app-body">
-        <aside id="panel" className="panel" aria-label="Map options" tabIndex={-1}>
+        <aside id="panel" className="panel" aria-label="Locations and map options" tabIndex={-1}>
+          <LocationsPanel
+            locations={locations}
+            selectedId={selectedId}
+            addMode={addMode}
+            undoChange={undoChange(history)}
+            redoChange={redoChange(history)}
+            onToggleAddMode={toggleAddMode}
+            onAddAtCentre={() => {
+              const centre = controller.current?.center();
+              if (centre) add(centre.lng, centre.lat);
+            }}
+            onSelect={setSelectedId}
+            onZoomTo={(location: Location) => controller.current?.flyTo(location.lng, location.lat)}
+            onEdit={(id, name, lng, lat) => dispatch({ type: 'edit', id, name, lng, lat })}
+            onRemove={(id) => dispatch({ type: 'remove', id })}
+            onUndo={undo}
+            onRedo={redo}
+            onClear={() => {
+              const count = locations.length;
+              dispatch({ type: 'clear' });
+              setAddMode(false);
+              setNotice({
+                text: `Cleared ${count} ${count === 1 ? 'location' : 'locations'}.`,
+                undo: true,
+              });
+            }}
+          />
+          {!saved && (
+            <p className="hint panel-content">
+              Browser storage is unavailable; locations will not be kept after reload.
+            </p>
+          )}
           {/* Narrow screens stack the panel above the map, so the options start collapsed there. */}
           <details className="panel-options" open={startOpen}>
             <summary>Map options</summary>
@@ -88,10 +237,7 @@ export function AppShell() {
                     checked={basemap.id === basemapId}
                     onChange={() => chooseBasemap(basemap.id)}
                   />
-                  <span>
-                    <span className="radio-label">{basemap.label}</span>
-                    <span className="radio-description">{basemap.description}</span>
-                  </span>
+                  <span>{basemap.label}</span>
                 </label>
               ))}
             </fieldset>
@@ -102,14 +248,7 @@ export function AppShell() {
                   checked={labels === 'walkshed'}
                   onChange={(event) => chooseLabels(event.currentTarget.checked)}
                 />
-                <span>
-                  <span className="radio-label">Walkshed labels</span>
-                  <span className="radio-description">
-                    Street and trail names from zoom 14, bolder major roads, fewer repeats and
-                    regional names hidden when zoomed in. Clear to compare with the state style's
-                    labels.
-                  </span>
-                </span>
+                <span>Walkshed labels</span>
               </label>
             </div>
           </details>
@@ -121,13 +260,30 @@ export function AppShell() {
             <MapView
               basemapId={basemapId}
               labels={labels}
-              overlays={NO_OVERLAYS}
+              overlays={overlays}
               onBasemapState={onBasemapState}
+              locations={interaction}
+              controller={controller}
             />
           </Suspense>
-          <p role="status" className="map-status" data-kind={basemapState.kind}>
-            {statusMessage(basemapId, basemapState)}
-          </p>
+          <div
+            role="status"
+            className="map-status"
+            data-kind={shownNotice ? 'notice' : basemapState.kind}
+          >
+            {shownNotice ? (
+              <>
+                {shownNotice.text}
+                {shownNotice.undo && (
+                  <button type="button" className="notice-action" onClick={undo}>
+                    Undo
+                  </button>
+                )}
+              </>
+            ) : (
+              statusMessage(basemapId, basemapState)
+            )}
+          </div>
         </div>
       </main>
     </div>

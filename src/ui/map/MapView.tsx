@@ -1,5 +1,8 @@
 import {
+  type GeoJSONSource,
   type MapEventType,
+  type MapLayerMouseEvent,
+  type MapLayerTouchEvent,
   Map as MapLibreMap,
   NavigationControl,
   ScaleControl,
@@ -9,10 +12,16 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 // MapLibre looks for its worker beside its own module, which does not survive bundling. Vite
 // emits the self-contained worker as a separate asset and supplies its final address.
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
-import { useEffect, useRef, useState } from 'react';
+import { type RefObject, useEffect, useRef, useState } from 'react';
 import type { BasemapId, BasemapStyle } from '../../adapters/basemaps/basemap';
 import type { LabelPreset } from '../../adapters/basemaps/labels';
 import { basemapById } from '../../adapters/basemaps/registry';
+import type { Location } from '../../domain/locations';
+import {
+  LOCATION_MARKER_LAYER_ID,
+  LOCATIONS_SOURCE_ID,
+  locationsGeoJSON,
+} from '../locations/overlay';
 import { composeStyle, type OverlayStyle } from './compose-style';
 
 setWorkerUrl(workerUrl);
@@ -28,6 +37,22 @@ interface MapViewProps {
   labels: LabelPreset;
   overlays: OverlayStyle;
   onBasemapState: (state: BasemapState) => void;
+  locations?: LocationInteraction;
+  controller?: RefObject<MapController | null>;
+}
+
+export interface LocationInteraction {
+  items: readonly Location[];
+  selectedId: string | null;
+  addMode: boolean;
+  onAdd: (lng: number, lat: number) => void;
+  onSelect: (id: string | null) => void;
+  onMove: (id: string, lng: number, lat: number) => void;
+}
+
+export interface MapController {
+  center: () => { lng: number; lat: number };
+  flyTo: (lng: number, lat: number) => void;
 }
 
 /** Opening view: downtown Denver at a station-area scale. */
@@ -49,7 +74,14 @@ interface LoadedBasemap {
  * rebuilt from the selected basemap and the current overlays, so switching or losing the
  * basemap never discards application layers.
  */
-export function MapView({ basemapId, labels, overlays, onBasemapState }: MapViewProps) {
+export function MapView({
+  basemapId,
+  labels,
+  overlays,
+  onBasemapState,
+  locations,
+  controller,
+}: MapViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const [loaded, setLoaded] = useState<LoadedBasemap | null>(null);
@@ -100,6 +132,116 @@ export function MapView({ basemapId, labels, overlays, onBasemapState }: MapView
     return () => {
       mapRef.current = null;
       map.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!controller) return;
+    controller.current = {
+      center: () => {
+        const center = mapRef.current?.getCenter();
+        return {
+          lng: center?.lng ?? INITIAL_VIEW.center[0],
+          lat: center?.lat ?? INITIAL_VIEW.center[1],
+        };
+      },
+      flyTo: (lng, lat) =>
+        mapRef.current?.flyTo({ center: [lng, lat], zoom: Math.max(mapRef.current.getZoom(), 15) }),
+    };
+    return () => {
+      controller.current = null;
+    };
+  }, [controller]);
+
+  const interaction = useRef(locations);
+  useEffect(() => {
+    interaction.current = locations;
+    const canvas = mapRef.current?.getCanvas();
+    if (canvas) canvas.style.cursor = locations?.addMode ? 'crosshair' : '';
+  }, [locations]);
+
+  // Click to add or select; drag a marker to move it (committed once, on release).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    let dragging: { id: string; moved: boolean } | null = null;
+    // The click that follows a drag's release must not add or deselect.
+    let suppressClick = false;
+    const markerAt = (point: { x: number; y: number }): string | null => {
+      if (!map.getLayer(LOCATION_MARKER_LAYER_ID)) return null;
+      const id = map.queryRenderedFeatures([point.x, point.y], {
+        layers: [LOCATION_MARKER_LAYER_ID],
+      })[0]?.properties?.id;
+      return typeof id === 'string' ? id : null;
+    };
+    const onClick = (event: MapLayerMouseEvent) => {
+      const current = interaction.current;
+      if (!current) return;
+      if (suppressClick) {
+        suppressClick = false;
+        return;
+      }
+      const id = markerAt(event.point);
+      if (id) current.onSelect(id);
+      else if (current.addMode) current.onAdd(event.lngLat.lng, event.lngLat.lat);
+      else current.onSelect(null);
+    };
+    const start = (event: MapLayerMouseEvent | MapLayerTouchEvent) => {
+      if ('points' in event && event.points.length !== 1) return;
+      const id = markerAt(event.point);
+      if (!id || !interaction.current) return;
+      event.preventDefault();
+      dragging = { id, moved: false };
+      suppressClick = false;
+      map.getCanvas().style.cursor = 'grabbing';
+    };
+    const move = (event: MapLayerMouseEvent | MapLayerTouchEvent) => {
+      const current = interaction.current;
+      if (!dragging || !current) return;
+      dragging.moved = true;
+      const items = current.items.map((item) =>
+        item.id === dragging?.id ? { ...item, lng: event.lngLat.lng, lat: event.lngLat.lat } : item,
+      );
+      (map.getSource(LOCATIONS_SOURCE_ID) as GeoJSONSource | undefined)?.setData(
+        locationsGeoJSON(items, dragging.id),
+      );
+    };
+    const end = (event: MapLayerMouseEvent | MapLayerTouchEvent) => {
+      const current = interaction.current;
+      if (!dragging || !current) return;
+      const { id, moved } = dragging;
+      dragging = null;
+      suppressClick = moved;
+      map.getCanvas().style.cursor = current.addMode ? 'crosshair' : '';
+      current.onSelect(id);
+      if (moved) current.onMove(id, event.lngLat.lng, event.lngLat.lat);
+    };
+    const hover = (event: MapLayerMouseEvent) => {
+      if (dragging) return;
+      const over = markerAt(event.point) !== null;
+      map.getCanvas().style.cursor = over
+        ? 'grab'
+        : interaction.current?.addMode
+          ? 'crosshair'
+          : '';
+    };
+    map.on('click', onClick);
+    map.on('mousedown', start);
+    map.on('touchstart', start);
+    map.on('mousemove', move);
+    map.on('touchmove', move);
+    map.on('mouseup', end);
+    map.on('touchend', end);
+    map.on('mousemove', hover);
+    return () => {
+      map.off('click', onClick);
+      map.off('mousedown', start);
+      map.off('touchstart', start);
+      map.off('mousemove', move);
+      map.off('touchmove', move);
+      map.off('mouseup', end);
+      map.off('touchend', end);
+      map.off('mousemove', hover);
     };
   }, []);
 

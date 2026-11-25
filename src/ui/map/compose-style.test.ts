@@ -89,6 +89,12 @@ describe('composeStyle', () => {
     ]);
   });
 
+  it('uses overlay glyphs only when the basemap has none', () => {
+    const withGlyphs = { ...overlays, glyphs: 'https://app.test/{fontstack}/{range}.pbf' };
+    expect(composeStyle(null, withGlyphs).glyphs).toBe(withGlyphs.glyphs);
+    expect(composeStyle(vectorBasemap, withGlyphs).glyphs).toBe(vectorBasemap.glyphs);
+  });
+
   it('rejects overlay IDs reserved for the basemap', () => {
     expect(() =>
       composeStyle(null, {

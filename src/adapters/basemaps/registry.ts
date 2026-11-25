@@ -29,7 +29,7 @@ function appUrl(path: string): string {
   return new URL(`${import.meta.env.BASE_URL}${path}`, window.location.href).href;
 }
 
-function localGlyphsUrl(): string {
+export function localGlyphsUrl(): string {
   // Appended after resolving, because URL parsing would percent-encode the template braces.
   return `${appUrl('fonts/')}{fontstack}/{range}.pbf`;
 }
@@ -54,16 +54,10 @@ async function loadVector(
 }
 
 /** A restyled version of the state vector basemap (see variants.ts). */
-function variant(
-  id: BasemapId,
-  name: BasemapVariant,
-  label: string,
-  description: string,
-): BasemapDefinition {
+function variant(id: BasemapId, name: BasemapVariant, label: string): BasemapDefinition {
   return {
     id,
     label,
-    description,
     host: hostOf(vectorUrl),
     load: (signal, options) =>
       loadVector(signal, (style) => styleVariant(style, name), options?.labels),
@@ -74,49 +68,29 @@ export const BASEMAPS: readonly BasemapDefinition[] = [
   {
     id: 'oit-vector',
     label: 'Standard',
-    description: 'The state vector basemap in its published colours.',
     host: hostOf(vectorUrl),
     load: (signal, options) => loadVector(signal, (style) => style, options?.labels),
   },
   {
     id: 'oit-vector-muted',
     label: 'Muted',
-    description: 'The state vector basemap in light greys so stations and walksheds stand out.',
     host: hostOf(vectorUrl),
     load: (signal, options) => loadVector(signal, muteBasemapStyle, options?.labels),
   },
-  variant('oit-vector-dark', 'dark', 'Dark', 'Dark background with light streets and labels.'),
-  variant(
-    'oit-vector-contrast',
-    'contrast',
-    'High contrast',
-    'White background, dark streets, black labels and no area shading except water.',
-  ),
-  variant(
-    'oit-vector-minimal',
-    'minimal',
-    'Minimal',
-    'Very light streets, water and parks only; public lands, trails, rail and buildings hidden.',
-  ),
-  variant(
-    'oit-vector-walking',
-    'walking',
-    'Walking focus',
-    'Muted, with trails, parks and water in colour. The state tiles have no sidewalks or transit stops.',
-  ),
-  variant('oit-vector-tinted', 'tinted', 'Tinted', 'The muted map in pale blue-greys.'),
+  variant('oit-vector-dark', 'dark', 'Dark'),
+  variant('oit-vector-contrast', 'contrast', 'High contrast'),
+  variant('oit-vector-minimal', 'minimal', 'Minimal'),
+  variant('oit-vector-walking', 'walking', 'Walking focus'),
+  variant('oit-vector-tinted', 'tinted', 'Tinted'),
   {
     id: 'oit-raster',
     label: 'Map server images',
-    description:
-      'The standard map drawn on request by the state map server. Slower; dense areas can take up to a minute.',
     host: hostOf(rasterUrl),
     load: async () => oitRasterBasemap(rasterUrl, OIT_ATTRIBUTION),
   },
   {
     id: 'none',
     label: 'No basemap',
-    description: 'Plain background. Stations and walksheds still display.',
     host: null,
     load: async () => ({ sources: {}, layers: [] }),
   },

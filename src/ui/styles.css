@@ -153,12 +153,130 @@ input[type="radio"] {
   margin-bottom: 0.25rem;
   font-weight: bold;
 }
-.radio-label {
+
+/* Locations */
+
+.locations {
+  padding: 0.75rem 1rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.locations h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.125rem;
+}
+.locations .count {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: normal;
+}
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.4rem 0;
+}
+.button-row button,
+.notice-action {
+  min-height: 2.25rem;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--control-border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+.button-row button:hover:not(:disabled) {
+  background: var(--surface-muted);
+}
+.button-row button[aria-pressed="true"] {
+  background: var(--cdot-dark-blue);
+  border-color: var(--cdot-dark-blue);
+  color: #fff;
+}
+.button-row button:disabled {
+  color: var(--text-muted);
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+.hint {
+  margin: 0.5rem 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+.location-list {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.location-list li {
+  border-top: 1px solid var(--border);
+}
+.location-list li[data-selected] {
+  background: var(--surface-muted);
+  box-shadow: inset 4px 0 0 var(--cdot-dark-blue);
+}
+.location-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  width: 100%;
+  padding: 0.45rem 0.5rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.location-number {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--cdot-dark-blue);
+  box-shadow: 0 0 0 1px var(--cdot-dark-blue);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+li[data-selected] .location-number {
+  box-shadow: 0 0 0 3px var(--cdot-orange);
+}
+.location-name,
+.location-coords {
   display: block;
 }
-.radio-description {
-  display: block;
+.location-name {
+  font-weight: bold;
+}
+.location-coords {
   color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+.location-actions,
+.location-edit {
+  margin: 0;
+  padding: 0 0.5rem 0.6rem 2.7rem;
+}
+.location-edit label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.875rem;
+}
+.location-edit input {
+  display: block;
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--control-border);
+  border-radius: 4px;
+  font: inherit;
+}
+.field-error {
+  margin: 0.25rem 0;
+  color: var(--cdot-red);
   font-size: 0.875rem;
 }
 
@@ -194,6 +312,12 @@ input[type="radio"] {
   box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
   font-size: 0.875rem;
 }
+.map-status[data-kind="notice"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
 .map-status[data-kind="partial"] {
   border-left-color: var(--cdot-orange);
 }
@@ -225,6 +349,14 @@ input[type="radio"] {
     overflow: visible;
     border-right: 0;
     border-bottom: 1px solid var(--border);
+  }
+  .location-list {
+    max-height: 16rem;
+    overflow-y: auto;
+  }
+  .button-row button {
+    flex: 1 1 auto;
+    min-height: 2.75rem;
   }
   .map-area {
     flex: 1 0 auto;
