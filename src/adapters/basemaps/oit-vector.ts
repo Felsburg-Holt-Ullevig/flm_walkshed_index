@@ -1,4 +1,4 @@
-import {
+﻿import {
   BASEMAP_LAYER_PREFIX,
   BasemapError,
   type BasemapStyle,
@@ -68,6 +68,41 @@ function offsetLineLabel(layer: Record<string, unknown>): void {
   layout['text-offset'] = [0, -LINE_LABEL_OFFSET_EMS];
 }
 
+/** Font stacks available from a self-hosted glyph set (see public/fonts/README.md). */
+export const LOCAL_FONT_REGULAR = 'Noto Sans Regular';
+export const LOCAL_FONT_ITALIC = 'Noto Sans Italic';
+export const LOCAL_FONT_BOLD = 'Noto Sans Bold';
+
+/** Picks the local font closest to a published font name by its style words. */
+export function localFontFor(name: string): string {
+  if (/italic/i.test(name)) return LOCAL_FONT_ITALIC;
+  if (/medium|bold|heavy|black|demi/i.test(name)) return LOCAL_FONT_BOLD;
+  return LOCAL_FONT_REGULAR;
+}
+
+/**
+ * The published style's fonts come from the tile service, which answers glyph requests slowly
+ * (about two seconds each). When a local glyph set is supplied, each label's font list is replaced
+ * with the nearest local font so no glyph request reaches the service.
+ */
+function substituteLocalFonts(layer: Record<string, unknown>): void {
+  const layout = layer.layout;
+  if (layer.type !== 'symbol' || !isRecord(layout)) return;
+  const fonts = layout['text-font'];
+  if (fonts === undefined) {
+    if (layout['text-field'] !== undefined) layout['text-font'] = [LOCAL_FONT_REGULAR];
+    return;
+  }
+  if (!Array.isArray(fonts) || !fonts.every((font) => typeof font === 'string'))
+    invalid(`layer ${String(layer.id)} text-font must be a list of font names`);
+  layout['text-font'] = [localFontFor(fonts[0] ?? '')];
+}
+
+export interface EsriVectorStyleOptions {
+  /** Absolute glyph URL template for the local fonts; omit to use the service's fonts. */
+  localGlyphs?: string;
+}
+
 /**
  * Converts the style document an ArcGIS VectorTileServer publishes into MapLibre sources and
  * layers. ArcGIS styles use relative resource URLs and a source `url` that points at the
@@ -78,6 +113,7 @@ export function adaptEsriVectorStyle(
   input: unknown,
   serviceUrl: string,
   attribution: string,
+  options: EsriVectorStyleOptions = {},
 ): BasemapStyle {
   if (!isRecord(input)) invalid('is not a JSON object');
   if (input.version !== 8) invalid('is not style specification version 8');
@@ -113,6 +149,7 @@ export function adaptEsriVectorStyle(
     copy.id = `${BASEMAP_LAYER_PREFIX}${id}`;
     if (type !== 'background') copy.source = OIT_VECTOR_SOURCE_ID;
     offsetLineLabel(copy);
+    if (options.localGlyphs) substituteLocalFonts(copy);
     return copy as unknown as LayerSpecification;
   });
 
@@ -148,7 +185,11 @@ export function adaptEsriVectorStyle(
     if (typeof input.sprite !== 'string') invalid('sprite must be a single URL');
     result.sprite = resolveTemplate(input.sprite, styleUrl, 'sprite');
   }
-  if (input.glyphs !== undefined) {
+  if (options.localGlyphs) {
+    if (!options.localGlyphs.includes('{fontstack}') || !options.localGlyphs.includes('{range}'))
+      throw new Error('local glyphs template lacks {fontstack} or {range}');
+    result.glyphs = options.localGlyphs;
+  } else if (input.glyphs !== undefined) {
     if (typeof input.glyphs !== 'string') invalid('glyphs must be a URL template');
     const glyphs = resolveTemplate(input.glyphs, styleUrl, 'glyphs');
     if (!glyphs.includes('{fontstack}') || !glyphs.includes('{range}'))
@@ -160,16 +201,47 @@ export function adaptEsriVectorStyle(
   return result;
 }
 
+// Style requests started before the map code has loaded, keyed by style URL; each is used once.
+const prefetched = new Map<string, Promise<Response>>();
+
+/**
+ * Starts the style request immediately. The map engine is loaded as a separate chunk, and the
+ * style server is slow, so starting here lets the two downloads overlap. A later
+ * `loadOitVectorBasemap` call for the same service takes over this request.
+ */
+export function prefetchOitVectorStyle(serviceUrl: string, fetchImpl: typeof fetch = fetch): void {
+  const styleUrl = `${serviceUrl}/resources/styles/root.json`;
+  if (prefetched.has(styleUrl)) return;
+  const request = fetchImpl(styleUrl, { credentials: 'omit' });
+  // A failure is reported by the load that consumes the request, not here.
+  request.catch(() => {});
+  prefetched.set(styleUrl, request);
+}
+
+function abortable<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
+  if (signal.aborted) return Promise.reject(signal.reason);
+  return new Promise((resolve, reject) => {
+    const onAbort = () => reject(signal.reason);
+    signal.addEventListener('abort', onAbort, { once: true });
+    promise.then(resolve, reject).finally(() => signal.removeEventListener('abort', onAbort));
+  });
+}
+
 export async function loadOitVectorBasemap(
   serviceUrl: string,
   attribution: string,
   signal: AbortSignal,
   fetchImpl: typeof fetch = fetch,
+  options: EsriVectorStyleOptions = {},
 ): Promise<BasemapStyle> {
   const styleUrl = `${serviceUrl}/resources/styles/root.json`;
+  const early = prefetched.get(styleUrl);
+  prefetched.delete(styleUrl);
   let response: Response;
   try {
-    response = await fetchImpl(styleUrl, { signal, credentials: 'omit' });
+    response = await (early
+      ? abortable(early, signal)
+      : fetchImpl(styleUrl, { signal, credentials: 'omit' }));
   } catch (error) {
     if (signal.aborted) throw error;
     throw new BasemapError('fetch_failed', `vector basemap style request failed (${error})`);
@@ -183,5 +255,5 @@ export async function loadOitVectorBasemap(
     if (signal.aborted) throw error;
     throw new BasemapError('invalid_content', 'vector basemap style is not JSON');
   }
-  return adaptEsriVectorStyle(json, serviceUrl, attribution);
+  return adaptEsriVectorStyle(json, serviceUrl, attribution, options);
 }

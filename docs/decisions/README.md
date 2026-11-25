@@ -46,3 +46,4 @@ The concrete condition that would reopen the decision.
 
 | 0013 | [Census indicator definitions and deferred methods](0013-census-indicator-definitions-and-deferred-methods.md) | Accepted definitions; implementation pending | 2026-11-12 |
 | 0014 | [Map renderer and provisional basemap](0014-map-renderer-and-provisional-basemap.md) | Accepted for the prototype; production basemap use pending | 2026-11-25 |
+| 0015 | [Basemap styles, labels and caching](0015-basemap-styles-labels-and-caching.md) | Proposed for the prototype; data and typography approval pending | 2026-11-25 |

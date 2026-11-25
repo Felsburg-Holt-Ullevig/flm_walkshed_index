@@ -91,9 +91,6 @@ body {
   display: grid;
   grid-template-columns: var(--panel-width) minmax(0, 1fr);
 }
-.app-body[data-panel="closed"] {
-  grid-template-columns: auto minmax(0, 1fr);
-}
 
 /* Analysis panel */
 
@@ -105,67 +102,11 @@ body {
 .panel:focus-visible {
   outline-offset: -3px;
 }
-.panel-head {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-}
-.panel-head h2 {
-  margin: 0;
-  font-size: 1.125rem;
-}
 button {
   font: inherit;
 }
-.panel-toggle {
-  min-height: 2.5rem;
-  padding: 0.4rem 0.8rem;
-  border: 1px solid var(--cdot-dark-blue);
-  border-radius: 4px;
-  background: var(--surface);
-  color: var(--cdot-dark-blue);
-  cursor: pointer;
-}
-.panel-toggle:hover {
-  background: var(--surface-muted);
-}
 .panel-content {
   padding: 0 1rem 1rem;
-}
-.panel-section {
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--border);
-}
-.panel-section h3 {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.25rem 0.6rem;
-  margin: 0 0 0.4rem;
-  font-size: 1rem;
-  color: var(--cdot-dark-blue);
-}
-.section-status {
-  padding: 0 0.45rem;
-  border-radius: 3px;
-  background: var(--surface-muted);
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  font-weight: normal;
-}
-.section-body p {
-  margin: 0.4rem 0;
-}
-.note {
-  color: var(--text-muted);
-  font-size: 0.875rem;
 }
 .build {
   margin: 1rem 0 0;
@@ -191,9 +132,20 @@ input[type="radio"] {
   padding: 0.35rem 0;
   cursor: pointer;
 }
+.panel-options summary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-size: 1.125rem;
+  font-weight: bold;
+  cursor: pointer;
+}
 .basemap-choice {
   margin: 0;
-  padding: 0;
+  padding: 1rem;
   border: 0;
 }
 .basemap-choice legend {
@@ -208,28 +160,6 @@ input[type="radio"] {
   display: block;
   color: var(--text-muted);
   font-size: 0.875rem;
-}
-.legend {
-  margin: 0.25rem 0;
-  padding: 0;
-  list-style: none;
-  font-size: 0.875rem;
-}
-.legend li {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.15rem 0;
-}
-.swatch {
-  width: 1.75rem;
-  height: 1rem;
-  flex: none;
-  border: 3px solid;
-  border-radius: 3px;
-}
-.swatch[data-dashed="true"] {
-  border-style: dashed;
 }
 
 /* Map */
@@ -286,8 +216,7 @@ input[type="radio"] {
     min-height: 100dvh;
   }
   /* Stacked: the panel takes its natural height and the map fills the rest of the screen. */
-  .app-body,
-  .app-body[data-panel="closed"] {
+  .app-body {
     display: flex;
     flex-direction: column;
   }
@@ -295,9 +224,6 @@ input[type="radio"] {
     overflow: visible;
     border-right: 0;
     border-bottom: 1px solid var(--border);
-  }
-  .panel-head {
-    position: static;
   }
   .map-area {
     flex: 1 0 auto;

@@ -11,6 +11,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 import { useEffect, useRef, useState } from 'react';
 import type { BasemapId, BasemapStyle } from '../../adapters/basemaps/basemap';
+import type { LabelPreset } from '../../adapters/basemaps/labels';
 import { basemapById } from '../../adapters/basemaps/registry';
 import { composeStyle, type OverlayStyle } from './compose-style';
 import { FIXTURE_VIEW } from './fixtures';
@@ -25,6 +26,7 @@ export type BasemapState =
 
 interface MapViewProps {
   basemapId: BasemapId;
+  labels: LabelPreset;
   overlays: OverlayStyle;
   onBasemapState: (state: BasemapState) => void;
 }
@@ -45,7 +47,7 @@ interface LoadedBasemap {
  * rebuilt from the selected basemap and the current overlays, so switching or losing the
  * basemap never discards application layers.
  */
-export function MapView({ basemapId, overlays, onBasemapState }: MapViewProps) {
+export function MapView({ basemapId, labels, overlays, onBasemapState }: MapViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const [loaded, setLoaded] = useState<LoadedBasemap | null>(null);
@@ -104,7 +106,7 @@ export function MapView({ basemapId, overlays, onBasemapState }: MapViewProps) {
     lastReport.current = '';
     emit({ kind: 'loading' });
     basemapById(basemapId)
-      .load(controller.signal)
+      .load(controller.signal, { labels })
       .then(
         (style) => setLoaded({ id: basemapId, style }),
         (error: unknown) => {
@@ -117,7 +119,7 @@ export function MapView({ basemapId, overlays, onBasemapState }: MapViewProps) {
         },
       );
     return () => controller.abort();
-  }, [basemapId, emit]);
+  }, [basemapId, labels, emit]);
 
   useEffect(() => {
     overlaysRef.current = overlays;

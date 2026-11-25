@@ -3,8 +3,13 @@ import { BasemapError } from './basemap';
 import {
   adaptEsriVectorStyle,
   LINE_LABEL_OFFSET_EMS,
+  LOCAL_FONT_BOLD,
+  LOCAL_FONT_ITALIC,
+  LOCAL_FONT_REGULAR,
   loadOitVectorBasemap,
+  localFontFor,
   OIT_VECTOR_SOURCE_ID,
+  prefetchOitVectorStyle,
 } from './oit-vector';
 
 const SERVICE = 'https://tiles.example.test/arcgis/rest/services/Base/VectorTileServer';
@@ -200,5 +205,58 @@ describe('loadOitVectorBasemap', () => {
     await expect(
       loadOitVectorBasemap(SERVICE, 'Credit', controller.signal, fetchImpl),
     ).rejects.toThrow('aborted');
+  });
+
+  it('uses a prefetched style request once instead of fetching again', async () => {
+    const service = `${SERVICE}/prefetch`;
+    let calls = 0;
+    const fetchImpl = (async () => {
+      calls++;
+      return new Response(JSON.stringify(esriStyle()), { status: 200 });
+    }) as typeof fetch;
+    prefetchOitVectorStyle(service, fetchImpl);
+    prefetchOitVectorStyle(service, fetchImpl);
+    await loadOitVectorBasemap(service, 'Credit', signal, fetchImpl);
+    expect(calls).toBe(1);
+    await loadOitVectorBasemap(service, 'Credit', signal, fetchImpl);
+    expect(calls).toBe(2);
+  });
+
+  it('reports a failed prefetched request as fetch_failed', async () => {
+    const service = `${SERVICE}/prefetch-fail`;
+    const fetchImpl = (async () => new Response('busy', { status: 503 })) as typeof fetch;
+    prefetchOitVectorStyle(service, fetchImpl);
+    await expect(loadOitVectorBasemap(service, 'Credit', signal, fetchImpl)).rejects.toThrow(
+      'fetch_failed: vector basemap style returned HTTP 503',
+    );
+  });
+});
+
+describe('local label fonts', () => {
+  const LOCAL = 'https://app.example.test/fonts/{fontstack}/{range}.pbf';
+
+  it('maps published font names to the nearest local style', () => {
+    expect(localFontFor('Avenir Next LT Pro Regular')).toBe(LOCAL_FONT_REGULAR);
+    expect(localFontFor('Tahoma Regular')).toBe(LOCAL_FONT_REGULAR);
+    expect(localFontFor('Avenir Next LT Pro Italic')).toBe(LOCAL_FONT_ITALIC);
+    expect(localFontFor('Avenir Next LT Pro Medium Italic')).toBe(LOCAL_FONT_ITALIC);
+    expect(localFontFor('Avenir Next LT Pro Medium')).toBe(LOCAL_FONT_BOLD);
+  });
+
+  it('replaces the glyph URL and every label font when local glyphs are given', () => {
+    const result = adaptEsriVectorStyle(esriStyle(), SERVICE, 'Credit', { localGlyphs: LOCAL });
+    expect(result.glyphs).toBe(LOCAL);
+    const label = result.layers.find((layer) => layer.type === 'symbol') as {
+      layout: Record<string, unknown>;
+    };
+    expect(label.layout['text-font']).toEqual([LOCAL_FONT_REGULAR]);
+  });
+
+  it('leaves the published fonts unchanged without local glyphs', () => {
+    const result = adaptEsriVectorStyle(esriStyle(), SERVICE, 'Credit');
+    const label = result.layers.find((layer) => layer.type === 'symbol') as {
+      layout: Record<string, unknown>;
+    };
+    expect(label.layout['text-font']).toEqual(['Sans Regular']);
   });
 });

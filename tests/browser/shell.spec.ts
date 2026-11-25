@@ -52,30 +52,50 @@ async function stubServices(page: Page, options: StubOptions = {}) {
 }
 
 const mapArea = (page: Page) => page.locator('.map-area');
+const status = (page: Page) => page.getByRole('status');
 
-test('shows the shell, basemap and fixture overlays', async ({ page }) => {
+test('shows the shell, the default muted basemap and fixture overlays', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   const requested = await stubServices(page);
   await page.setViewportSize({ width: 1366, height: 800 });
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('FLM Walkshed Index');
-  for (const name of ['Stations', 'Walksheds', 'Index analysis', 'Results and exports'])
-    await expect(page.getByRole('heading', { level: 3, name })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Basemap style' })).toBeVisible();
+  await expect(page.getByRole('radio', { name: /^Muted/ })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: /Walkshed labels/ })).toBeChecked();
+  await expect(page.getByText(/^Build /)).toBeVisible();
+  await expect(mapArea(page)).toHaveAttribute('data-basemap', 'oit-vector-muted');
   await expect(mapArea(page)).toHaveAttribute('data-basemap-state', 'ready');
-  await expect(page.getByRole('status')).toHaveText('Basemap loaded: Colorado state basemap.');
+  await expect(status(page)).toHaveText('Basemap loaded: Muted style.');
   await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText('OpenStreetMap');
+  await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText('U.S. Census Bureau');
   expect(new Set(requested)).toEqual(new Set([VECTOR_HOST]));
   expect(errors).toEqual([]);
   await page.screenshot({ path: 'data/staging/prototype/shell-desktop.png' });
+});
 
-  // Hiding the fixtures changes the rendered map; showing them restores it.
+test('switches basemap styles and labels, and records them in the address', async ({ page }) => {
+  await stubServices(page);
+  await page.goto('/');
+  await expect(mapArea(page)).toHaveAttribute('data-basemap-state', 'ready');
   const canvas = page.locator('.maplibregl-canvas');
-  const withFixtures = await canvas.screenshot();
-  await page.getByLabel('Show illustrative fixture shapes').uncheck();
-  await expect.poll(async () => (await canvas.screenshot()).equals(withFixtures)).toBe(false);
-  await page.getByLabel('Show illustrative fixture shapes').check();
-  await expect.poll(async () => (await canvas.screenshot()).equals(withFixtures)).toBe(true);
+  const muted = await canvas.screenshot();
+
+  await page.getByRole('radio', { name: /^Dark/ }).check();
+  await expect(mapArea(page)).toHaveAttribute('data-basemap', 'oit-vector-dark');
+  await expect(status(page)).toHaveText('Basemap loaded: Dark style.');
+  await expect(page).toHaveURL(/basemap=dark/);
+  await expect.poll(async () => (await canvas.screenshot()).equals(muted)).toBe(false);
+
+  await page.getByRole('checkbox', { name: /Walkshed labels/ }).uncheck();
+  await expect(page).toHaveURL(/labels=original/);
+  await expect(mapArea(page)).toHaveAttribute('data-basemap-state', 'ready');
+
+  // A shared link reopens the same choices.
+  await page.reload();
+  await expect(page.getByRole('radio', { name: /^Dark/ })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: /Walkshed labels/ })).not.toBeChecked();
 });
 
 test('loads the map engine and its worker from a subdirectory', async ({ page }) => {
@@ -88,25 +108,23 @@ test('keeps overlays and offers alternatives when the basemap is unavailable', a
   await stubServices(page, { style: 'unavailable' });
   await page.goto('/');
   await expect(mapArea(page)).toHaveAttribute('data-basemap-state', 'unavailable');
-  await expect(page.getByRole('status')).toContainText(
+  await expect(status(page)).toContainText(
     'Basemap unavailable (fetch_failed: vector basemap style returned HTTP 503)',
   );
-  await expect(page.getByLabel('Show illustrative fixture shapes')).toBeChecked();
 
-  await page.getByRole('radio', { name: /No basemap/ }).check();
+  await page.getByRole('radio', { name: /^No basemap/ }).check();
   await expect(mapArea(page)).toHaveAttribute('data-basemap', 'none');
-  await expect(page.getByRole('status')).toHaveText('No basemap selected.');
+  await expect(status(page)).toHaveText('No basemap selected.');
 
-  await page.getByRole('radio', { name: /map server images/ }).check();
+  await page.getByRole('radio', { name: /^Map server images/ }).check();
   await expect(mapArea(page)).toHaveAttribute('data-basemap-state', 'ready');
-  await expect(page.getByText(`Basemap requests go to ${RASTER_HOST}.`)).toBeVisible();
 });
 
 test('reports basemap tiles that fail to load', async ({ page }) => {
   await stubServices(page, { tiles: 'failing' });
   await page.goto('/');
   await expect(mapArea(page)).toHaveAttribute('data-basemap-state', 'partial');
-  await expect(page.getByRole('status')).toContainText('did not load');
+  await expect(status(page)).toContainText('did not load');
 });
 
 test('supports keyboard use of the panel and basemap choice', async ({ page }) => {
@@ -115,31 +133,20 @@ test('supports keyboard use of the panel and basemap choice', async ({ page }) =
   await expect(mapArea(page)).toHaveAttribute('data-basemap-state', 'ready');
 
   await page.keyboard.press('Tab');
-  const skip = page.getByRole('link', { name: 'Skip to analysis panel' });
+  const skip = page.getByRole('link', { name: 'Skip to map options' });
   await expect(skip).toBeFocused();
   await expect(skip).toBeInViewport();
   await page.keyboard.press('Enter');
   await expect(page.locator('#panel')).toBeFocused();
 
-  await page.keyboard.press('Tab');
-  const toggle = page.getByRole('button', { name: 'Hide panel' });
-  await expect(toggle).toBeFocused();
-  await page.keyboard.press('Enter');
-  await expect(page.getByRole('button', { name: 'Show panel' })).toHaveAttribute(
-    'aria-expanded',
-    'false',
-  );
-  await expect(page.getByRole('heading', { name: 'Stations' })).toBeHidden();
-  await page.keyboard.press('Enter');
-  await expect(page.getByRole('button', { name: 'Hide panel' })).toHaveAttribute(
-    'aria-expanded',
-    'true',
-  );
-
-  await page.getByRole('radio', { name: /Colorado state basemap Pre-built/ }).focus();
+  await page.getByRole('radio', { name: /^Muted/ }).focus();
   await page.keyboard.press('ArrowDown');
-  await expect(mapArea(page)).toHaveAttribute('data-basemap', 'oit-raster');
+  await expect(mapArea(page)).toHaveAttribute('data-basemap', 'oit-vector-dark');
   await expect(mapArea(page)).toHaveAttribute('data-basemap-state', 'ready');
+
+  await page.getByRole('checkbox', { name: /Walkshed labels/ }).focus();
+  await page.keyboard.press('Space');
+  await expect(page).toHaveURL(/labels=original/);
 });
 
 test('reflows without horizontal scrolling at narrow widths', async ({ page }) => {
@@ -151,13 +158,13 @@ test('reflows without horizontal scrolling at narrow widths', async ({ page }) =
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
-    // The panel starts closed on narrow screens so the map is visible without scrolling.
-    await expect(page.getByRole('button', { name: 'Show panel' })).toBeVisible();
+    // The options start collapsed on narrow screens so the map is visible without scrolling.
+    await expect(page.getByRole('radio', { name: /^Muted/ })).toBeHidden();
     const box = await mapArea(page).boundingBox();
     expect(box?.height ?? 0).toBeGreaterThan(300);
     expect(box?.y ?? Number.POSITIVE_INFINITY).toBeLessThan(300);
-    await page.getByRole('button', { name: 'Show panel' }).click();
-    await expect(page.getByRole('heading', { name: 'Stations' })).toBeVisible();
+    await page.getByText('Map options', { exact: true }).click();
+    await expect(page.getByRole('radio', { name: /^Muted/ })).toBeVisible();
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);

@@ -43,9 +43,11 @@ Run these from the repository root.
 | `pnpm build` | Runs typechecking and creates `dist/` static assets |
 | `pnpm preview` | Serves the built page at `http://127.0.0.1:4173/` until stopped |
 
-The page opens the map application shell. Add `?view=network-review` to the address for the experimental network-review harness.
+The page opens the map application shell. Add `?view=network-review` to the address for the experimental network-review harness. `?basemap=` selects a basemap style (`muted` (default), `standard`, `dark`, `contrast`, `minimal`, `walking`, `tinted`, `images` or `none`) and `?labels=original` turns off the walkshed label preset; the panel keeps both in the address.
 
-The default basemap loads from the State of Colorado OIT service at `ti-cooit.img.arcgis.com`; the alternate image basemap loads from `gis.colorado.gov`. `VITE_OIT_VECTOR_BASEMAP_URL` and `VITE_OIT_RASTER_BASEMAP_URL` replace those service addresses at build time. They hold public addresses only, never credentials. See [decision 0014](docs/decisions/0014-map-renderer-and-provisional-basemap.md).
+The default basemap loads from the State of Colorado OIT service at `ti-cooit.img.arcgis.com`; the alternate image basemap loads from `gis.colorado.gov`. `VITE_OIT_VECTOR_BASEMAP_URL` and `VITE_OIT_RASTER_BASEMAP_URL` replace those service addresses at build time. They hold public addresses only, never credentials. See [decision 0014](docs/decisions/0014-map-renderer-and-provisional-basemap.md) and [decision 0015](docs/decisions/0015-basemap-styles-labels-and-caching.md).
+
+Production builds register a service worker (`public/sw.js`) that caches basemap responses; development (`pnpm dev`) does not. To clear it, use the browser's site-data controls, or change `CACHE_NAME` in `sw.js`. `node scripts/build-place-labels.mjs` rebuilds `public/data/place-labels.geojson` from public Census, USGS and Denver services; see `public/data/README.md`.
 
 `pnpm test:browser` serves the built `dist/` folder, so run `pnpm build` first. Its map shell checks replace the state services with local stand-ins. To check the real services, run `pnpm build`, then set `FLM_LIVE_SERVICES=1` and run `pnpm test:browser tests/browser/live-basemap.spec.ts`. The live check reports whether each basemap loaded, the time taken and the hosts contacted; a failure there describes service availability, not an application regression.
 

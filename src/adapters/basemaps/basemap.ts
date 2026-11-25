@@ -6,7 +6,16 @@ export type StyleSpecification = Exclude<Parameters<MapLibreMap['setStyle']>[0],
 export type LayerSpecification = StyleSpecification['layers'][number];
 export type SourceSpecification = StyleSpecification['sources'][string];
 
-export type BasemapId = 'oit-vector' | 'oit-raster' | 'none';
+export type BasemapId =
+  | 'oit-vector'
+  | 'oit-vector-muted'
+  | 'oit-vector-dark'
+  | 'oit-vector-contrast'
+  | 'oit-vector-minimal'
+  | 'oit-vector-walking'
+  | 'oit-vector-tinted'
+  | 'oit-raster'
+  | 'none';
 
 /** Layer IDs of every basemap start with this prefix; source IDs start with `basemap-`. */
 export const BASEMAP_LAYER_PREFIX = 'basemap/';
@@ -28,7 +37,8 @@ export interface BasemapDefinition {
   description: string;
   /** Host that supplies imagery or tiles, shown so users know where map requests go. */
   host: string | null;
-  load(signal: AbortSignal): Promise<BasemapStyle>;
+  /** `labels` applies to the vector basemaps only (see labels.ts). */
+  load(signal: AbortSignal, options?: { labels?: 'walkshed' | 'original' }): Promise<BasemapStyle>;
 }
 
 export type BasemapErrorCode = 'fetch_failed' | 'invalid_content';

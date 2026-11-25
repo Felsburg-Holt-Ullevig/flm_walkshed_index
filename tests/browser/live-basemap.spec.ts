@@ -5,9 +5,10 @@ import { expect, test } from '@playwright/test';
 // time of the run, not application correctness.
 test.skip(!process.env.FLM_LIVE_SERVICES, 'Set FLM_LIVE_SERVICES=1 to contact live services.');
 
-for (const [basemap, label] of [
-  ['oit-vector', /Colorado state basemap Pre-built/],
-  ['oit-raster', /map server images/],
+for (const [basemap, param] of [
+  ['oit-vector-muted', 'muted'],
+  ['oit-vector', 'standard'],
+  ['oit-raster', 'images'],
 ] as const) {
   test(`live ${basemap} basemap loads at the fixture view`, async ({ page }) => {
     test.setTimeout(180000);
@@ -19,15 +20,9 @@ for (const [basemap, label] of [
     });
     page.on('requestfailed', (request) => failed.push(request.url()));
     await page.setViewportSize({ width: 1366, height: 800 });
-    await page.goto('/');
-    const area = page.locator('.map-area');
-    if (basemap !== 'oit-vector') {
-      await expect(area).toHaveAttribute('data-basemap-state', /ready|partial|unavailable/, {
-        timeout: 120000,
-      });
-      await page.getByRole('radio', { name: label }).check();
-    }
     const started = Date.now();
+    await page.goto(`/?basemap=${param}`);
+    const area = page.locator('.map-area');
     await expect(area).toHaveAttribute('data-basemap', basemap);
     await expect(area).toHaveAttribute('data-basemap-state', /ready|partial|unavailable/, {
       timeout: 150000,
